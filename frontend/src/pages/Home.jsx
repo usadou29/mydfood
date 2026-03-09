@@ -61,23 +61,23 @@ export function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
-            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 text-white"
+            className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8"
           >
-            <div>
+            <div className="bg-black/30 backdrop-blur-sm rounded-xl p-4">
               <p className="text-3xl font-bold text-terracotta">500+</p>
-              <p className="text-sm text-gray-300">Clients satisfaits</p>
+              <p className="text-sm text-white/90 font-medium">Clients satisfaits</p>
             </div>
-            <div>
+            <div className="bg-black/30 backdrop-blur-sm rounded-xl p-4">
               <p className="text-3xl font-bold text-terracotta">4.9/5</p>
-              <p className="text-sm text-gray-300">Note moyenne</p>
+              <p className="text-sm text-white/90 font-medium">Note moyenne</p>
             </div>
-            <div>
+            <div className="bg-black/30 backdrop-blur-sm rounded-xl p-4">
               <p className="text-3xl font-bold text-terracotta">24h</p>
-              <p className="text-sm text-gray-300">Livraison rapide</p>
+              <p className="text-sm text-white/90 font-medium">Livraison rapide</p>
             </div>
-            <div>
+            <div className="bg-black/30 backdrop-blur-sm rounded-xl p-4">
               <p className="text-3xl font-bold text-terracotta">100%</p>
-              <p className="text-sm text-gray-300">Fait maison</p>
+              <p className="text-sm text-white/90 font-medium">Fait maison</p>
             </div>
           </motion.div>
         </div>
@@ -126,33 +126,34 @@ export function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow"
+                className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-terracotta/20"
               >
-                <div className="h-48 overflow-hidden">
+                <div className="h-48 overflow-hidden relative">
                   <img 
                     src={service.image} 
                     alt={service.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
                 <div className="p-6">
-                  <span className="text-sm text-terracotta font-medium">{service.subtitle}</span>
-                  <h3 className="font-display text-xl font-bold text-anthracite mt-1">{service.title}</h3>
-                  <p className="mt-2 text-gray-600 text-sm">{service.description}</p>
-                  <ul className="mt-4 space-y-1">
+                  <span className="text-sm text-terracotta font-semibold uppercase tracking-wide">{service.subtitle}</span>
+                  <h3 className="font-display text-2xl font-bold text-anthracite mt-2">{service.title}</h3>
+                  <p className="mt-3 text-gray-600 text-sm leading-relaxed">{service.description}</p>
+                  <ul className="mt-4 space-y-2">
                     {service.features.slice(0, 2).map((feature, i) => (
-                      <li key={i} className="flex items-center gap-2 text-sm text-gray-600">
-                        <div className="w-1.5 h-1.5 bg-terracotta rounded-full" />
+                      <li key={i} className="flex items-center gap-2 text-sm text-gray-700">
+                        <div className="w-2 h-2 bg-terracotta rounded-full flex-shrink-0" />
                         {feature}
                       </li>
                     ))}
                   </ul>
                   <Link 
                     to={service.link}
-                    className="mt-6 inline-flex items-center gap-2 text-terracotta font-semibold hover:gap-3 transition-all"
+                    className="mt-6 inline-flex items-center gap-2 text-terracotta font-semibold hover:gap-3 transition-all group/link"
                   >
                     {service.cta}
-                    <ArrowRight size={16} />
+                    <ArrowRight size={16} className="group-hover/link:translate-x-1 transition-transform" />
                   </Link>
                 </div>
               </motion.div>
@@ -184,19 +185,19 @@ export function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white/10 backdrop-blur rounded-2xl overflow-hidden"
+                className="bg-white/10 backdrop-blur rounded-2xl overflow-hidden border border-white/10 hover:border-white/20 transition-colors"
               >
                 <div className="h-56 overflow-hidden">
                   <img 
                     src={event.image} 
                     alt={event.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   />
                 </div>
                 <div className="p-6">
-                  <h3 className="font-display text-xl font-bold">{event.title}</h3>
-                  <p className="mt-2 text-gray-300 text-sm">{event.description}</p>
-                  <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">
+                  <h3 className="font-display text-xl font-bold text-white">{event.title}</h3>
+                  <p className="mt-2 text-white/80 text-sm leading-relaxed">{event.description}</p>
+                  <div className="mt-4 flex flex-wrap gap-4 text-sm text-white/70">
                     <span className="flex items-center gap-1">
                       <Calendar size={14} />
                       {new Date(event.date).toLocaleDateString('fr-FR')}
@@ -228,16 +229,19 @@ export function Home() {
       {/* Témoignages */}
       <section className="py-20 bg-sand">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <span className="text-terracotta font-semibold">Avis clients</span>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-anthracite mt-2">
+            <span className="text-terracotta font-semibold uppercase tracking-wider text-sm">Avis clients</span>
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-anthracite mt-3">
               Ils nous font confiance
             </h2>
+            <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
+              Découvrez ce que nos clients pensent de notre cuisine camerounaise
+            </p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -248,15 +252,20 @@ export function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white p-6 rounded-2xl shadow-lg"
+                className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100"
               >
                 <div className="flex gap-1 mb-4">
                   {[...Array(avis.note)].map((_, i) => (
-                    <Star key={i} size={16} className="fill-gold text-gold" />
+                    <Star key={i} size={18} className="fill-gold text-gold" />
                   ))}
                 </div>
-                <p className="text-gray-700 mb-4">"{avis.commentaire}"</p>
-                <p className="text-sm font-semibold text-gray-900">{avis.nom}</p>
+                <p className="text-gray-700 mb-6 leading-relaxed italic">"{avis.commentaire}"</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-terracotta/10 rounded-full flex items-center justify-center">
+                    <span className="text-terracotta font-bold">{avis.nom.charAt(0)}</span>
+                  </div>
+                  <p className="text-sm font-semibold text-gray-900">{avis.nom}</p>
+                </div>
               </motion.div>
             ))}
           </div>

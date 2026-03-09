@@ -35,17 +35,19 @@ export function Navbar() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled ? 'bg-cream/95 backdrop-blur-md shadow-lg' : 'bg-transparent'
+          scrolled 
+            ? 'bg-cream/95 backdrop-blur-md shadow-lg' 
+            : 'bg-gradient-to-b from-black/50 to-transparent'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 lg:h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2">
-              <span className="font-display text-2xl lg:text-3xl font-bold text-terracotta">
+              <span className="font-display text-2xl lg:text-3xl font-bold text-terracotta drop-shadow-lg">
                 DFOOD
               </span>
-              <span className="hidden sm:block text-sm text-gray-600">by Tata Dow</span>
+              <span className={`hidden sm:block text-sm transition-colors ${scrolled ? 'text-gray-600' : 'text-white/90'}`}>by Tata Dow</span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -54,8 +56,12 @@ export function Navbar() {
                 <Link
                   key={link.name}
                   to={link.href}
-                  className={`text-sm font-medium transition-colors hover:text-terracotta ${
-                    location.pathname === link.href ? 'text-terracotta' : 'text-gray-700'
+                  className={`text-sm font-medium transition-colors hover:text-terracotta drop-shadow-md ${
+                    location.pathname === link.href 
+                      ? 'text-terracotta' 
+                      : scrolled 
+                        ? 'text-gray-700' 
+                        : 'text-white'
                   }`}
                 >
                   {link.name}
@@ -69,7 +75,7 @@ export function Navbar() {
                 href="https://wa.me/33600000000"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden sm:flex items-center gap-2 text-sm font-medium text-green-600 hover:text-green-700"
+                className={`hidden sm:flex items-center gap-2 text-sm font-medium transition-colors drop-shadow-md ${scrolled ? 'text-green-600 hover:text-green-700' : 'text-green-400 hover:text-green-300'}`}
               >
                 <Phone size={18} />
                 WhatsApp
@@ -81,7 +87,7 @@ export function Navbar() {
                 Commander
               </Link>
               <button
-                className="lg:hidden p-2"
+                className={`lg:hidden p-2 rounded-lg transition-colors ${scrolled ? 'text-gray-800 hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}
                 onClick={() => setIsOpen(!isOpen)}
                 aria-label="Menu"
               >
