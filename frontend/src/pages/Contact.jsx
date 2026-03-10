@@ -24,7 +24,7 @@ export function Contact() {
   return (
     <div className="min-h-screen bg-cream pt-20">
       {/* Hero */}
-      <section className="bg-anthracite text-white py-20">
+      <section className="bg-blue text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -33,7 +33,7 @@ export function Contact() {
             <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
               Contactez-nous
             </h1>
-            <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+            <p className="text-lg text-white/90 max-w-2xl mx-auto">
               Une question ? Une demande spéciale ? N'hésitez pas à nous contacter, 
               nous vous répondrons avec plaisir.
             </p>
@@ -51,62 +51,62 @@ export function Contact() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <h2 className="font-display text-2xl font-bold mb-8">Nos coordonnées</h2>
+              <h2 className="font-display text-2xl font-bold text-text mb-8">Nos coordonnées</h2>
               
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-terracotta/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Phone className="text-terracotta" size={24} />
+                  <div className="w-12 h-12 bg-yellow/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Phone className="text-yellow" size={24} />
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-1">Téléphone</h3>
-                    <p className="text-gray-600">+33 6 00 00 00 00</p>
-                    <p className="text-sm text-gray-500">Disponible sur WhatsApp</p>
+                    <h3 className="font-semibold text-text mb-1">Téléphone</h3>
+                    <p className="text-text-light">+33 6 00 00 00 00</p>
+                    <p className="text-sm text-text-light">Disponible sur WhatsApp</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-terracotta/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Mail className="text-terracotta" size={24} />
+                  <div className="w-12 h-12 bg-yellow/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Mail className="text-yellow" size={24} />
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-1">Email</h3>
-                    <p className="text-gray-600">contact@mydfood.com</p>
+                    <h3 className="font-semibold text-text mb-1">Email</h3>
+                    <p className="text-text-light">contact@mydfood.com</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-terracotta/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <MapPin className="text-terracotta" size={24} />
+                  <div className="w-12 h-12 bg-yellow/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <MapPin className="text-yellow" size={24} />
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-1">Adresse</h3>
-                    <p className="text-gray-600">Antony, 92160</p>
-                    <p className="text-sm text-gray-500">Points de retrait : Antony, Châtelet, Denfert-Rochereau</p>
+                    <h3 className="font-semibold text-text mb-1">Adresse</h3>
+                    <p className="text-text-light">Antony, 92160</p>
+                    <p className="text-sm text-text-light">Points de retrait : Antony, Châtelet, Denfert-Rochereau</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-terracotta/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Clock className="text-terracotta" size={24} />
+                  <div className="w-12 h-12 bg-yellow/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Clock className="text-yellow" size={24} />
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-1">Horaires</h3>
-                    <p className="text-gray-600">Lundi - Samedi : 10h - 20h</p>
-                    <p className="text-sm text-gray-500">Livraison : 11h30 - 14h00 & 18h30 - 21h00</p>
+                    <h3 className="font-semibold text-text mb-1">Horaires</h3>
+                    <p className="text-text-light">Lundi - Samedi : 10h - 20h</p>
+                    <p className="text-sm text-text-light">Livraison : 11h30 - 14h00 & 18h30 - 21h00</p>
                   </div>
                 </div>
               </div>
 
               {/* Réseaux sociaux */}
               <div className="mt-12">
-                <h3 className="font-semibold mb-4">Suivez-nous</h3>
+                <h3 className="font-semibold text-text mb-4">Suivez-nous</h3>
                 <div className="flex gap-4">
                   <a 
                     href="https://instagram.com" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="w-12 h-12 bg-anthracite text-white rounded-lg flex items-center justify-center hover:bg-terracotta transition-colors"
+                    className="w-12 h-12 bg-text text-white rounded-xl flex items-center justify-center hover:bg-blue transition-colors"
                   >
                     <Instagram size={24} />
                   </a>
@@ -114,7 +114,7 @@ export function Contact() {
                     href="https://facebook.com" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="w-12 h-12 bg-anthracite text-white rounded-lg flex items-center justify-center hover:bg-terracotta transition-colors"
+                    className="w-12 h-12 bg-text text-white rounded-xl flex items-center justify-center hover:bg-blue transition-colors"
                   >
                     <Facebook size={24} />
                   </a>
@@ -127,37 +127,37 @@ export function Contact() {
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="bg-white rounded-2xl shadow-xl p-8"
+              className="bg-white rounded-2xl shadow-card p-8"
             >
-              <h2 className="font-display text-2xl font-bold mb-6">Envoyez-nous un message</h2>
+              <h2 className="font-display text-2xl font-bold text-text mb-6">Envoyez-nous un message</h2>
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Nom complet</label>
+                  <label className="block text-sm font-medium text-text-light mb-2">Nom complet</label>
                   <input
                     type="text"
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracotta focus:border-transparent"
+                    className="w-full px-4 py-3 border border-cream-dark rounded-xl bg-cream focus:ring-2 focus:ring-yellow focus:border-transparent transition-all"
                     value={formData.nom}
                     onChange={(e) => setFormData({...formData, nom: e.target.value})}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                  <label className="block text-sm font-medium text-text-light mb-2">Email</label>
                   <input
                     type="email"
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracotta focus:border-transparent"
+                    className="w-full px-4 py-3 border border-cream-dark rounded-xl bg-cream focus:ring-2 focus:ring-yellow focus:border-transparent transition-all"
                     value={formData.email}
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Sujet</label>
+                  <label className="block text-sm font-medium text-text-light mb-2">Sujet</label>
                   <select
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracotta focus:border-transparent"
+                    className="w-full px-4 py-3 border border-cream-dark rounded-xl bg-cream focus:ring-2 focus:ring-yellow focus:border-transparent transition-all"
                     value={formData.sujet}
                     onChange={(e) => setFormData({...formData, sujet: e.target.value})}
                   >
@@ -171,11 +171,11 @@ export function Contact() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                  <label className="block text-sm font-medium text-text-light mb-2">Message</label>
                   <textarea
                     rows="5"
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-terracotta focus:border-transparent"
+                    className="w-full px-4 py-3 border border-cream-dark rounded-xl bg-cream focus:ring-2 focus:ring-yellow focus:border-transparent transition-all"
                     value={formData.message}
                     onChange={(e) => setFormData({...formData, message: e.target.value})}
                   />
@@ -187,13 +187,13 @@ export function Contact() {
                 </Button>
               </form>
 
-              <p className="mt-4 text-center text-sm text-gray-500">
+              <p className="mt-4 text-center text-sm text-text-light">
                 Ou écrivez-nous directement sur{' '}
                 <a 
                   href="https://wa.me/33600000000" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-green-600 hover:underline"
+                  className="text-blue hover:underline"
                 >
                   WhatsApp
                 </a>

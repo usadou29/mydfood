@@ -9,14 +9,14 @@ export function Button({
   disabled = false,
   type = 'button'
 }) {
-  const baseStyles = 'font-semibold rounded-lg transition-all duration-300 flex items-center justify-center gap-2';
+  const baseStyles = 'font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-2';
   
   const variants = {
-    primary: 'bg-terracotta text-white hover:bg-terracotta-dark shadow-lg hover:shadow-xl',
-    secondary: 'bg-gold text-anthracite hover:bg-yellow-500 shadow-lg hover:shadow-xl',
-    outline: 'border-2 border-terracotta text-terracotta hover:bg-terracotta hover:text-white',
-    ghost: 'text-terracotta hover:bg-terracotta/10',
-    dark: 'bg-anthracite text-white hover:bg-gray-800 shadow-lg hover:shadow-xl'
+    primary: 'bg-yellow text-text hover:bg-yellow-dark shadow-soft hover:shadow-hover',
+    secondary: 'bg-blue text-white hover:bg-blue-dark shadow-soft hover:shadow-hover',
+    outline: 'border-2 border-yellow text-text hover:bg-yellow transition-colors',
+    ghost: 'text-blue hover:bg-blue/10',
+    dark: 'bg-text text-white hover:bg-text/80 shadow-soft hover:shadow-hover'
   };
   
   const sizes = {
