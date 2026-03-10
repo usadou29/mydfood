@@ -1,119 +1,131 @@
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Instagram, Facebook, Phone, Mail, MapPin } from 'lucide-react';
+import { LogoSmall } from './Logo';
 
 export function Footer() {
+  const currentYear = new Date().getFullYear();
+
+  const footerLinks = {
+    services: [
+      { label: 'Commander', path: '/commander' },
+      { label: 'Menus Famille', path: '/menus-famille' },
+      { label: 'Traiteur', path: '/traiteur' },
+      { label: 'Événements', path: '/evenements' },
+    ],
+    company: [
+      { label: 'À propos', path: '/contact' },
+      { label: 'Nos Chefs', path: '/#' },
+      { label: 'Carrières', path: '/#' },
+      { label: 'Blog', path: '/#' },
+    ],
+    support: [
+      { label: 'FAQ', path: '/#' },
+      { label: 'Livraison', path: '/#' },
+      { label: 'Contact', path: '/contact' },
+      { label: 'Mentions légales', path: '/#' },
+    ],
+  };
+
   return (
-    <footer className="bg-anthracite text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid md:grid-cols-4 gap-12">
+    <footer className="bg-white pt-16 pb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
           {/* Brand */}
-          <div className="md:col-span-1">
-            <Link to="/" className="inline-block">
-              <span className="font-display text-3xl font-bold text-terracotta">DFOOD</span>
+          <div className="lg:col-span-2">
+            <Link to="/" className="flex items-center gap-3 mb-4">
+              <LogoSmall className="w-12 h-12" />
+              <div>
+                <span className="font-display text-xl font-bold text-text">DFOOD</span>
+                <span className="block text-[10px] tracking-[0.15em] text-text-light uppercase">
+                  Freshly Cooked
+                </span>
+              </div>
             </Link>
-            <p className="mt-4 text-gray-400 text-sm leading-relaxed">
-              Cuisine camerounaise moderne par Tata Dow. 
-              Des saveurs authentiques préparées avec amour.
+            <p className="text-text-light mb-6 max-w-sm">
+              Une cuisine maison d'exception, préparée avec amour et livrée chez vous. 
+              Frais, local et délicieux.
             </p>
-            <div className="mt-6 flex gap-4">
-              <a 
-                href="https://instagram.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-terracotta transition-colors"
-              >
-                <Instagram size={20} />
-              </a>
-              <a 
-                href="https://facebook.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-terracotta transition-colors"
-              >
-                <Facebook size={20} />
-              </a>
+            
+            {/* Newsletter */}
+            <div>
+              <p className="font-semibold text-text mb-3">Newsletter</p>
+              <div className="flex gap-2">
+                <input
+                  type="email"
+                  placeholder="Votre email"
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-cream-dark bg-cream focus:border-yellow focus:outline-none transition-colors text-sm"
+                />
+                <button className="px-4 py-2.5 bg-yellow rounded-xl text-text font-medium hover:bg-yellow-dark transition-colors">
+                  OK
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Navigation */}
+          {/* Links */}
           <div>
-            <h3 className="font-semibold text-lg mb-4">Navigation</h3>
+            <h4 className="font-display font-bold text-text mb-4">Services</h4>
             <ul className="space-y-3">
-              <li>
-                <Link to="/" className="text-gray-400 hover:text-white transition-colors">Accueil</Link>
-              </li>
-              <li>
-                <Link to="/commander" className="text-gray-400 hover:text-white transition-colors">Commander</Link>
-              </li>
-              <li>
-                <Link to="/menus-famille" className="text-gray-400 hover:text-white transition-colors">Menus Famille</Link>
-              </li>
-              <li>
-                <Link to="/traiteur" className="text-gray-400 hover:text-white transition-colors">Traiteur</Link>
-              </li>
-              <li>
-                <Link to="/evenements" className="text-gray-400 hover:text-white transition-colors">Événements</Link>
-              </li>
+              {footerLinks.services.map((link) => (
+                <li key={link.path}>
+                  <Link to={link.path} className="text-text-light hover:text-text transition-colors text-sm">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Services */}
           <div>
-            <h3 className="font-semibold text-lg mb-4">Nos Services</h3>
+            <h4 className="font-display font-bold text-text mb-4">Entreprise</h4>
             <ul className="space-y-3">
-              <li className="text-gray-400">Plats individuels</li>
-              <li className="text-gray-400">Menus famille</li>
-              <li className="text-gray-400">Traiteur événementiel</li>
-              <li className="text-gray-400">Corporate & B2B</li>
-              <li className="text-gray-400">Ateliers cuisine</li>
+              {footerLinks.company.map((link) => (
+                <li key={link.label}>
+                  <Link to={link.path} className="text-text-light hover:text-text transition-colors text-sm">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
-            <h3 className="font-semibold text-lg mb-4">Contact</h3>
+            <h4 className="font-display font-bold text-text mb-4">Aide</h4>
             <ul className="space-y-3">
-              <li className="flex items-center gap-2 text-gray-400">
-                <Phone size={16} className="text-terracotta" />
-                +33 6 00 00 00 00
-              </li>
-              <li className="flex items-center gap-2 text-gray-400">
-                <Mail size={16} className="text-terracotta" />
-                contact@mydfood.com
-              </li>
-              <li className="flex items-start gap-2 text-gray-400">
-                <MapPin size={16} className="text-terracotta flex-shrink-0 mt-1" />
-                Antony, 92160
-              </li>
+              {footerLinks.support.map((link) => (
+                <li key={link.label}>
+                  <Link to={link.path} className="text-text-light hover:text-text transition-colors text-sm">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
-            <a 
-              href="https://wa.me/33600000000"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
-            >
-              <Phone size={16} />
-              Commander sur WhatsApp
-            </a>
           </div>
         </div>
 
         {/* Bottom */}
-        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-gray-500 text-sm">
-            © 2026 DFOOD by Tata Dow. Tous droits réservés.
+        <div className="pt-8 border-t border-cream-dark flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-text-light text-sm">
+            © {currentYear} DFOOD. Tous droits réservés.
           </p>
-          <div className="flex gap-6 text-sm">
-            <Link to="/mentions-legales" className="text-gray-500 hover:text-white transition-colors">
-              Mentions légales
-            </Link>
-            <Link to="/cgv" className="text-gray-500 hover:text-white transition-colors">
-              CGV
-            </Link>
-            <Link to="/contact" className="text-gray-500 hover:text-white transition-colors">
-              Contact
-            </Link>
+          
+          {/* Social Links */}
+          <div className="flex gap-4">
+            {[
+              { name: 'Facebook', icon: 'M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z' },
+              { name: 'Instagram', icon: 'M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01M7.5 3h9a4.5 4.5 0 014.5 4.5v9a4.5 4.5 0 01-4.5 4.5h-9A4.5 4.5 0 013 16.5v-9A4.5 4.5 0 017.5 3z' },
+              { name: 'Twitter', icon: 'M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z' },
+            ].map((social) => (
+              <a
+                key={social.name}
+                href="#"
+                className="w-10 h-10 rounded-full bg-cream flex items-center justify-center text-text-light hover:bg-yellow hover:text-text transition-colors"
+                aria-label={social.name}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={social.icon} />
+                </svg>
+              </a>
+            ))}
           </div>
         </div>
       </div>
