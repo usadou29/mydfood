@@ -1,53 +1,72 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, Plus, Minus, X, Info } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, X, Info, Loader2 } from 'lucide-react';
 import { Button } from '../components/Button';
-import { plats, zonesLivraison } from '../data/mockData';
+import { useCart } from '../context/CartContext';
+import { useSupabaseQuery } from '../hooks/useSupabaseQuery';
+import { fetchPlats } from '../services/plats';
+import { fetchZonesLivraison } from '../services/commandes';
 
 export function Commander() {
-  const [cart, setCart] = useState([]);
+  const { data: plats, loading: loadingPlats, error: errorPlats } = useSupabaseQuery(fetchPlats);
+  const { data: zones, loading: loadingZones } = useSupabaseQuery(fetchZonesLivraison);
+
+  const { cart, addToCart, updateQuantite, cartTotal, cartCount } = useCart();
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [selectedZone, setSelectedZone] = useState(zonesLivraison[0]);
+  const [selectedZone, setSelectedZone] = useState(null);
   const [showAllergens, setShowAllergens] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const addToCart = (plat) => {
-    setCart(prev => {
-      const existing = prev.find(item => item.id === plat.id);
-      if (existing) {
-        return prev.map(item => 
-          item.id === plat.id 
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-      return [...prev, { ...plat, quantity: 1 }];
+  // Sélectionner la première zone par défaut quand les données arrivent
+  useEffect(() => {
+    if (zones && zones.length > 0 && !selectedZone) {
+      setSelectedZone(zones[0]);
+    }
+  }, [zones, selectedZone]);
+
+  const fraisLivraison = selectedZone ? Number(selectedZone.frais_livraison) : 0;
+  const minimumCommande = selectedZone ? Number(selectedZone.minimum_commande) : 0;
+  const totalWithDelivery = cartTotal + fraisLivraison;
+  const canOrder = cartTotal >= minimumCommande;
+
+  const handleAddToCart = (plat) => {
+    addToCart({
+      id: plat.id,
+      type: 'plat',
+      nom: plat.nom,
+      prix: plat.prix,
+      image_url: plat.image_url,
     });
     setIsCartOpen(true);
   };
 
-  const updateQuantity = (platId, delta) => {
-    setCart(prev => prev.map(item => {
-      if (item.id === platId) {
-        const newQuantity = Math.max(0, item.quantity + delta);
-        return newQuantity === 0 ? null : { ...item, quantity: newQuantity };
-      }
-      return item;
-    }).filter(Boolean));
-  };
+  if (loadingPlats || loadingZones) {
+    return (
+      <div className="min-h-screen bg-cream pt-20 flex items-center justify-center">
+        <Loader2 className="animate-spin text-blue" size={48} />
+      </div>
+    );
+  }
 
-  const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const totalWithDelivery = cartTotal + selectedZone.prix;
-  const canOrder = cartTotal >= selectedZone.minCommande;
+  if (errorPlats) {
+    return (
+      <div className="min-h-screen bg-cream pt-20 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">Erreur de chargement : {errorPlats}</p>
+          <Button onClick={() => window.location.reload()}>Réessayer</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-cream pt-20 pb-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
@@ -56,41 +75,43 @@ export function Commander() {
             Commander vos plats
           </h1>
           <p className="mt-4 text-text-light">
-            Livraison ou retrait sous 24h. Commande minimum : {selectedZone.minCommande}€
+            Livraison ou retrait sous 24h. Commande minimum : {minimumCommande}€
           </p>
         </motion.div>
 
         {/* Zone de livraison */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-white rounded-2xl p-6 mb-8 shadow-card"
-        >
-          <h2 className="font-semibold text-lg mb-4 flex items-center gap-2 text-text">
-            <Info size={20} className="text-blue" />
-            Zone de livraison
-          </h2>
-          <div className="flex flex-wrap gap-3">
-            {zonesLivraison.map((zone) => (
-              <button
-                key={zone.nom}
-                onClick={() => setSelectedZone(zone)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  selectedZone.nom === zone.nom
-                    ? 'bg-yellow text-text'
-                    : 'bg-cream text-text-light hover:bg-cream-dark'
-                }`}
-              >
-                {zone.nom} {zone.prix > 0 ? `(+${zone.prix}€)` : '(Gratuit)'}
-              </button>
-            ))}
-          </div>
-        </motion.div>
+        {zones && zones.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-white rounded-2xl p-6 mb-8 shadow-card"
+          >
+            <h2 className="font-semibold text-lg mb-4 flex items-center gap-2 text-text">
+              <Info size={20} className="text-blue" />
+              Zone de livraison
+            </h2>
+            <div className="flex flex-wrap gap-3">
+              {zones.map((zone) => (
+                <button
+                  key={zone.id}
+                  onClick={() => setSelectedZone(zone)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    selectedZone?.id === zone.id
+                      ? 'bg-yellow text-text'
+                      : 'bg-cream text-text-light hover:bg-cream-dark'
+                  }`}
+                >
+                  {zone.nom} {Number(zone.frais_livraison) > 0 ? `(+${zone.frais_livraison}€)` : '(Gratuit)'}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
 
         {/* Plats */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {plats.map((plat, index) => (
+          {plats && plats.map((plat, index) => (
             <motion.div
               key={plat.id}
               initial={{ opacity: 0, y: 20 }}
@@ -99,27 +120,32 @@ export function Commander() {
               className="bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-hover transition-shadow"
             >
               <div className="relative h-48">
-                <img 
-                  src={plat.image} 
-                  alt={plat.name}
+                <img
+                  src={plat.image_url}
+                  alt={plat.nom}
                   className="w-full h-full object-cover"
                 />
-                {plat.popular && (
+                {plat.populaire && (
                   <span className="absolute top-3 left-3 bg-yellow text-text px-3 py-1 rounded-full text-xs font-semibold">
                     Populaire
+                  </span>
+                )}
+                {plat.portions_restantes !== null && plat.portions_restantes <= 5 && plat.portions_restantes > 0 && (
+                  <span className="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                    Plus que {plat.portions_restantes} !
                   </span>
                 )}
               </div>
               <div className="p-5">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-display text-lg font-bold text-text">{plat.name}</h3>
-                  <span className="text-xl font-bold text-blue">{plat.price}€</span>
+                  <h3 className="font-display text-lg font-bold text-text">{plat.nom}</h3>
+                  <span className="text-xl font-bold text-blue">{Number(plat.prix).toFixed(0)}€</span>
                 </div>
                 <p className="text-text-light text-sm mb-4">{plat.description}</p>
-                
-                {plat.allergens.length > 0 && (
+
+                {plat.allergens && plat.allergens.length > 0 && (
                   <div className="mb-4">
-                    <button 
+                    <button
                       onClick={() => setShowAllergens(showAllergens === plat.id ? null : plat.id)}
                       className="text-xs text-text-light underline"
                     >
@@ -133,13 +159,14 @@ export function Commander() {
                   </div>
                 )}
 
-                <Button 
-                  variant="primary" 
+                <Button
+                  variant="primary"
                   className="w-full"
-                  onClick={() => addToCart(plat)}
+                  onClick={() => handleAddToCart(plat)}
+                  disabled={plat.portions_restantes !== null && plat.portions_restantes <= 0}
                 >
                   <Plus size={18} />
-                  Ajouter au panier
+                  {plat.portions_restantes !== null && plat.portions_restantes <= 0 ? 'Épuisé' : 'Ajouter au panier'}
                 </Button>
               </div>
             </motion.div>
@@ -161,7 +188,7 @@ export function Commander() {
             >
               <ShoppingCart size={24} />
               <span className="absolute -top-2 -right-2 bg-yellow text-text text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
-                {cart.reduce((sum, item) => sum + item.quantity, 0)}
+                {cartCount}
               </span>
             </motion.button>
 
@@ -191,22 +218,22 @@ export function Commander() {
 
                   <div className="space-y-4 max-h-64 overflow-auto">
                     {cart.map((item) => (
-                      <div key={item.id} className="flex items-center gap-3">
-                        <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded-lg" />
+                      <div key={`${item.type}-${item.id}`} className="flex items-center gap-3">
+                        <img src={item.image_url} alt={item.nom} className="w-16 h-16 object-cover rounded-lg" />
                         <div className="flex-1">
-                          <h4 className="font-semibold text-sm text-text">{item.name}</h4>
-                          <p className="text-blue font-bold">{item.price}€</p>
+                          <h4 className="font-semibold text-sm text-text">{item.nom}</h4>
+                          <p className="text-blue font-bold">{item.prix}€</p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <button 
-                            onClick={() => updateQuantity(item.id, -1)}
+                          <button
+                            onClick={() => updateQuantite(item.id, -1, item.type)}
                             className="w-8 h-8 bg-cream rounded-full flex items-center justify-center"
                           >
                             <Minus size={14} />
                           </button>
-                          <span className="w-6 text-center text-text">{item.quantity}</span>
-                          <button 
-                            onClick={() => updateQuantity(item.id, 1)}
+                          <span className="w-6 text-center text-text">{item.quantite}</span>
+                          <button
+                            onClick={() => updateQuantite(item.id, 1, item.type)}
                             className="w-8 h-8 bg-cream rounded-full flex items-center justify-center"
                           >
                             <Plus size={14} />
@@ -222,8 +249,8 @@ export function Commander() {
                       <span>{cartTotal.toFixed(2)}€</span>
                     </div>
                     <div className="flex justify-between text-sm text-text">
-                      <span>Livraison ({selectedZone.nom})</span>
-                      <span>{selectedZone.prix > 0 ? `${selectedZone.prix}€` : 'Gratuit'}</span>
+                      <span>Livraison ({selectedZone?.nom})</span>
+                      <span>{fraisLivraison > 0 ? `${fraisLivraison}€` : 'Gratuit'}</span>
                     </div>
                     <div className="flex justify-between font-bold text-lg pt-2 border-t border-cream-dark">
                       <span>Total</span>
@@ -232,13 +259,13 @@ export function Commander() {
                   </div>
 
                   {!canOrder && (
-                    <p className="text-yellow-dark text-sm mt-4 text-center">
-                      Minimum {selectedZone.minCommande}€ pour commander
+                    <p className="text-yellow-warning text-sm mt-4 text-center font-medium">
+                      Minimum {minimumCommande}€ pour commander
                     </p>
                   )}
 
-                  <Button 
-                    variant="primary" 
+                  <Button
+                    variant="primary"
                     className="w-full mt-4"
                     disabled={!canOrder}
                     onClick={() => alert('Redirection vers la page de paiement...')}

@@ -13,8 +13,9 @@ export default {
         },
         yellow: {
           DEFAULT: '#F4C25A',
-          dark: '#E5B34C',
+          dark: '#C08A1E',
           light: '#F9D78A',
+          warning: '#92600A',
         },
         blue: {
           DEFAULT: '#2F79A0',

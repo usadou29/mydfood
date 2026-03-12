@@ -1,12 +1,20 @@
 {
   "name": "mydfood",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "description": "DFOOD by Tata Dow – Cuisine camerounaise à domicile",
+  "workspaces": [
+    "frontend"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "npm run dev --workspace=frontend",
+    "build": "npm run build --workspace=frontend",
+    "preview": "npm run preview --workspace=frontend",
+    "lint": "npm run lint --workspace=frontend",
+    "test": "npm run test --workspace=frontend",
+    "test:ui": "npm run test:ui --workspace=frontend"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["food", "cameroun", "traiteur", "delivery", "supabase"],
+  "author": "Ulrich Sadou",
   "license": "ISC"
 }

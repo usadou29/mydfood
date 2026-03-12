@@ -1,13 +1,47 @@
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Clock, ChefHat, ArrowRight } from 'lucide-react';
+import { Users, Clock, ChefHat, ArrowRight, Loader2 } from 'lucide-react';
 import { Button } from '../components/Button';
-import { menusFamille } from '../data/mockData';
+import { useCart } from '../context/CartContext';
+import { useSupabaseQuery } from '../hooks/useSupabaseQuery';
+import { fetchMenusFamille } from '../services/menus';
 
 export function MenusFamille() {
+  const { data: menusFamille, loading, error } = useSupabaseQuery(fetchMenusFamille);
+  const { addToCart } = useCart();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const handleAddToCart = (menu) => {
+    addToCart({
+      id: menu.id,
+      type: 'menu_famille',
+      nom: menu.nom,
+      prix: menu.prix,
+      image_url: menu.image_url,
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-cream pt-20 flex items-center justify-center">
+        <Loader2 className="animate-spin text-blue" size={48} />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-cream pt-20 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">Erreur de chargement : {error}</p>
+          <Button onClick={() => window.location.reload()}>Réessayer</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-cream pt-20">
@@ -22,7 +56,7 @@ export function MenusFamille() {
               Menus Famille
             </h1>
             <p className="text-lg text-white/90 max-w-2xl mx-auto">
-              Des menus complets pour partager un moment convivial autour 
+              Des menus complets pour partager un moment convivial autour
               de la cuisine camerounaise. De 1 à 8 personnes.
             </p>
           </motion.div>
@@ -33,7 +67,7 @@ export function MenusFamille() {
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {menusFamille.map((menu, index) => (
+            {menusFamille && menusFamille.map((menu, index) => (
               <motion.div
                 key={menu.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -43,18 +77,19 @@ export function MenusFamille() {
                 className="bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-hover transition-shadow"
               >
                 <div className="h-56 overflow-hidden">
-                  <img 
-                    src={menu.image} 
-                    alt={menu.name}
+                  <img
+                    src={menu.image_url}
+                    alt={menu.nom}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   />
                 </div>
                 <div className="p-6">
-                  <h3 className="font-display text-xl font-bold text-text mb-2">{menu.name}</h3>
-                  <p className="text-blue font-semibold mb-4">{menu.description}</p>
-                  
+                  <h3 className="font-display text-xl font-bold text-text mb-2">{menu.nom}</h3>
+                  <p className="text-blue font-semibold mb-1">{menu.description}</p>
+                  <p className="text-text-light text-sm mb-4">{menu.nb_personnes} personnes</p>
+
                   <ul className="space-y-2 mb-6">
-                    {menu.content.map((item, i) => (
+                    {menu.contenu && menu.contenu.map((item, i) => (
                       <li key={i} className="flex items-center gap-2 text-sm text-text-light">
                         <div className="w-1.5 h-1.5 bg-yellow rounded-full" />
                         {item}
@@ -63,8 +98,8 @@ export function MenusFamille() {
                   </ul>
 
                   <div className="flex items-center justify-between pt-4 border-t border-cream-dark">
-                    <span className="text-3xl font-bold text-blue">{menu.price}€</span>
-                    <Button variant="primary">
+                    <span className="text-3xl font-bold text-blue">{Number(menu.prix).toFixed(0)}€</span>
+                    <Button variant="primary" onClick={() => handleAddToCart(menu)}>
                       Commander
                       <ArrowRight size={18} />
                     </Button>
