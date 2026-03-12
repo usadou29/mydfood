@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { LogoSmall } from './Logo';
 import { useState, useEffect } from 'react';
-import { ShoppingCart, User, LogOut } from 'lucide-react';
+import { ShoppingCart, User, LogOut, Settings } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -10,7 +10,7 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { cartCount } = useCart();
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, isAdmin, signOut } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -89,6 +89,15 @@ export function Navbar() {
             </Link>
             {user ? (
               <div className="flex items-center gap-3">
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="flex items-center gap-1.5 text-sm text-blue hover:text-blue/80 transition-colors font-medium"
+                  >
+                    <Settings size={16} />
+                    Admin
+                  </Link>
+                )}
                 <Link
                   to="/profil"
                   className="flex items-center gap-2 text-sm text-text-light hover:text-text transition-colors"
@@ -157,6 +166,15 @@ export function Navbar() {
               <div className="border-t border-cream-dark mt-2 pt-2">
                 {user ? (
                   <>
+                    {isAdmin && (
+                      <Link
+                        to="/admin"
+                        className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium text-blue hover:bg-blue/10 transition-colors"
+                      >
+                        <Settings size={16} />
+                        Admin Dashboard
+                      </Link>
+                    )}
                     <Link
                       to="/profil"
                       className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium text-text-light hover:bg-cream-dark hover:text-text transition-colors"

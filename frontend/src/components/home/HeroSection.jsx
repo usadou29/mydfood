@@ -28,8 +28,8 @@ export function HeroSection() {
             </h1>
 
             <p className="text-lg text-text-light mb-8 max-w-lg leading-relaxed">
-              Savourez des plats camerounais authentiques, préparés avec amour et
-              des ingrédients frais. Livraison en Île-de-France sous 24h.
+              Plats faits maison, viandes 100% Halal, produits frais.
+              Thieb, grillades, pastels, beignets... livrés en Île-de-France.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
@@ -80,8 +80,8 @@ export function HeroSection() {
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">🍗</span>
                   <div>
-                    <p className="font-bold text-text text-sm">Fait maison</p>
-                    <p className="text-xs text-text-light">100% frais</p>
+                    <p className="font-bold text-text text-sm">100% Halal</p>
+                    <p className="text-xs text-text-light">Fait maison</p>
                   </div>
                 </div>
               </div>

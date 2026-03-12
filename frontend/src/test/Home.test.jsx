@@ -13,6 +13,9 @@ vi.mock('../components/home/PopularDishes', () => ({
 vi.mock('../components/home/AboutSection', () => ({
   AboutSection: () => <div data-testid="about-section">AboutSection</div>,
 }));
+vi.mock('../components/home/FormulesEtudiantes', () => ({
+  FormulesEtudiantes: () => <div data-testid="formules-etudiantes">FormulesEtudiantes</div>,
+}));
 vi.mock('../components/home/ServicesSection', () => ({
   ServicesSection: () => <div data-testid="services-section">ServicesSection</div>,
 }));
@@ -44,6 +47,10 @@ describe('Home page composition', () => {
     expect(screen.getByTestId('about-section')).toBeTruthy();
   });
 
+  it('renders FormulesEtudiantes', () => {
+    expect(screen.getByTestId('formules-etudiantes')).toBeTruthy();
+  });
+
   it('renders ServicesSection', () => {
     expect(screen.getByTestId('services-section')).toBeTruthy();
   });
@@ -56,18 +63,19 @@ describe('Home page composition', () => {
     expect(screen.getByTestId('testimonials')).toBeTruthy();
   });
 
-  it('renders all 6 sections in the correct order', () => {
+  it('renders all 7 sections in the correct order', () => {
     const sections = [
       'hero-section',
       'popular-dishes',
       'about-section',
+      'formules-etudiantes',
       'services-section',
       'reservation-cta',
       'testimonials',
     ];
     const elements = sections.map((id) => screen.getByTestId(id));
     // Verify all exist
-    expect(elements).toHaveLength(6);
+    expect(elements).toHaveLength(7);
     // Verify DOM order
     for (let i = 0; i < elements.length - 1; i++) {
       const pos = elements[i].compareDocumentPosition(elements[i + 1]);

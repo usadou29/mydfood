@@ -208,6 +208,27 @@ CREATE TABLE IF NOT EXISTS public.newsletter (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Témoignages clients
+CREATE TABLE IF NOT EXISTS public.temoignages (
+  id SERIAL PRIMARY KEY,
+  nom TEXT NOT NULL,
+  commentaire TEXT NOT NULL,
+  note INTEGER DEFAULT 5 CHECK (note >= 1 AND note <= 5),
+  approuve BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Photos du site (gestion des images via URLs HTTPS)
+CREATE TABLE IF NOT EXISTS public.photos_site (
+  id SERIAL PRIMARY KEY,
+  cle TEXT NOT NULL UNIQUE,
+  url TEXT NOT NULL,
+  alt_text TEXT DEFAULT '',
+  section TEXT NOT NULL,
+  description TEXT DEFAULT '',
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- =====================
 -- 2. INDEX
 -- =====================
@@ -219,6 +240,8 @@ CREATE INDEX IF NOT EXISTS idx_commandes_statut ON public.commandes(statut);
 CREATE INDEX IF NOT EXISTS idx_commandes_numero ON public.commandes(numero);
 CREATE INDEX IF NOT EXISTS idx_reservations_evenement ON public.reservations(evenement_id);
 CREATE INDEX IF NOT EXISTS idx_menus_semaine_actif ON public.menus_semaine(actif);
+CREATE INDEX IF NOT EXISTS idx_temoignages_approuve ON public.temoignages(approuve);
+CREATE INDEX IF NOT EXISTS idx_photos_site_cle ON public.photos_site(cle);
 
 -- =====================
 -- 3. FONCTIONS
@@ -253,6 +276,7 @@ CREATE OR REPLACE TRIGGER tr_commandes_updated BEFORE UPDATE ON public.commandes
 CREATE OR REPLACE TRIGGER tr_evenements_updated BEFORE UPDATE ON public.evenements FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE OR REPLACE TRIGGER tr_devis_updated BEFORE UPDATE ON public.devis_traiteur FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE OR REPLACE TRIGGER tr_menus_famille_updated BEFORE UPDATE ON public.menus_famille FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE OR REPLACE TRIGGER tr_photos_site_updated BEFORE UPDATE ON public.photos_site FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- Création automatique du profil à l'inscription
 CREATE OR REPLACE FUNCTION handle_new_user()
@@ -418,5 +442,20 @@ CREATE POLICY "contacts_admin_all" ON public.contacts FOR ALL USING (
 -- Newsletter : tout le monde peut s'inscrire
 CREATE POLICY "newsletter_insert_public" ON public.newsletter FOR INSERT WITH CHECK (true);
 CREATE POLICY "newsletter_admin_all" ON public.newsletter FOR ALL USING (
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+);
+
+-- Témoignages : lecture publique (approuvés), insertion publique, admin gère tout
+ALTER TABLE public.temoignages ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "temoignages_select_approved" ON public.temoignages FOR SELECT USING (approuve = true);
+CREATE POLICY "temoignages_insert_public" ON public.temoignages FOR INSERT WITH CHECK (true);
+CREATE POLICY "temoignages_admin_all" ON public.temoignages FOR ALL USING (
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+);
+
+-- Photos du site : lecture publique, écriture admin
+ALTER TABLE public.photos_site ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "photos_site_select_public" ON public.photos_site FOR SELECT USING (true);
+CREATE POLICY "photos_site_admin_write" ON public.photos_site FOR ALL USING (
   EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
 );

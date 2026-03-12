@@ -35,7 +35,7 @@ export function Footer() {
     ],
     support: [
       { label: 'Contact', path: '/contact' },
-      { label: 'WhatsApp', path: 'https://wa.me/33600000000', external: true },
+      { label: 'WhatsApp', path: 'https://wa.me/33756949537', external: true },
     ],
   };
 
@@ -55,8 +55,8 @@ export function Footer() {
               </div>
             </Link>
             <p className="text-white/70 mb-6 max-w-sm">
-              Cuisine camerounaise authentique, préparée avec amour par Tata Dow.
-              Livraison en Île-de-France.
+              Cuisine camerounaise authentique, viandes 100% Halal, préparée avec
+              passion par Doriane Fampou. Livraison en Île-de-France.
             </p>
 
             {/* Newsletter */}
@@ -133,8 +133,8 @@ export function Footer() {
                   )}
                 </li>
               ))}
-              <li className="text-white/60 text-sm">+33 6 00 00 00 00</li>
-              <li className="text-white/60 text-sm">contact@mydfood.com</li>
+              <li className="text-white/60 text-sm">+33 7 56 94 95 37</li>
+              <li className="text-white/60 text-sm">dfood237@gmail.com</li>
             </ul>
           </div>
         </div>
@@ -148,8 +148,9 @@ export function Footer() {
           {/* Social Links */}
           <div className="flex gap-4">
             {[
-              { name: 'Facebook', icon: 'M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z', href: 'https://facebook.com' },
-              { name: 'Instagram', icon: 'M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01M7.5 3h9a4.5 4.5 0 014.5 4.5v9a4.5 4.5 0 01-4.5 4.5h-9A4.5 4.5 0 013 16.5v-9A4.5 4.5 0 017.5 3z', href: 'https://instagram.com' },
+              { name: 'Facebook', icon: 'M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z', href: 'https://www.facebook.com/profile.php?id=100086791498498' },
+              { name: 'Instagram', icon: 'M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01M7.5 3h9a4.5 4.5 0 014.5 4.5v9a4.5 4.5 0 01-4.5 4.5h-9A4.5 4.5 0 013 16.5v-9A4.5 4.5 0 017.5 3z', href: 'https://instagram.com/dfood_237' },
+              { name: 'Snapchat', icon: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3v1c1.1 0 2 .9 2 2s-.9 2-2 2c-.35 2.35-1.67 3-3 3s-2.65-.65-3-3c-1.1 0-2-.9-2-2s.9-2 2-2V8c0-1.66 1.34-3 3-3z', href: 'https://snapchat.com/add/dfood237' },
             ].map((social) => (
               <a
                 key={social.name}

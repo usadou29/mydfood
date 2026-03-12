@@ -41,17 +41,17 @@ export function AboutSection() {
               L'amour de la cuisine camerounaise
             </h2>
             <p className="text-text-light mb-6 leading-relaxed">
-              Tata Dow partage depuis plus de 10 ans les saveurs authentiques du Cameroun.
-              Chaque plat est préparé avec des recettes traditionnelles et des ingrédients
-              frais, pour vous offrir un voyage culinaire inoubliable.
+              Fondé en octobre 2022 par Doriane Fampou, DFOOD est né d'une passion pour
+              la cuisine camerounaise. Des plats préparés avec des produits frais, des
+              viandes 100% Halal, et des pâtes à pastels confectionnées maison.
             </p>
 
             <div className="space-y-4 mb-8">
               {[
+                'Viandes 100% Halal certifiées',
+                'Produits frais, pâte à pastels maison',
                 'Recettes traditionnelles camerounaises',
-                'Ingrédients frais sélectionnés avec soin',
-                'Préparation artisanale quotidienne',
-                'Livraison soignée en Île-de-France',
+                'Livraison en Île-de-France',
               ].map((item, index) => (
                 <div key={index} className="flex items-center gap-3">
                   <div className="w-6 h-6 rounded-full bg-yellow flex items-center justify-center flex-shrink-0">

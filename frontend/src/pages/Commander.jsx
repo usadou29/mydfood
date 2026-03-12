@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, Plus, Minus, X, Info, Loader2 } from 'lucide-react';
 import { Button } from '../components/Button';
@@ -8,6 +9,7 @@ import { fetchPlats } from '../services/plats';
 import { fetchZonesLivraison } from '../services/commandes';
 
 export function Commander() {
+  const navigate = useNavigate();
   const { data: plats, loading: loadingPlats, error: errorPlats } = useSupabaseQuery(fetchPlats);
   const { data: zones, loading: loadingZones } = useSupabaseQuery(fetchZonesLivraison);
 
@@ -268,7 +270,7 @@ export function Commander() {
                     variant="primary"
                     className="w-full mt-4"
                     disabled={!canOrder}
-                    onClick={() => alert('Redirection vers la page de paiement...')}
+                    onClick={() => navigate('/checkout')}
                   >
                     Passer commande
                   </Button>

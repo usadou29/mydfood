@@ -10,7 +10,19 @@ export async function fetchZonesLivraison() {
   return data;
 }
 
-export async function creerCommande({ client, zone_livraison_id, type_livraison, creneau_livraison, items, sous_total, frais_livraison, pourboire, total, message_client }) {
+export async function creerCommande({
+  client,
+  zone_livraison_id,
+  type_livraison,
+  creneau_livraison,
+  items,
+  sous_total,
+  frais_livraison,
+  pourboire,
+  total,
+  message_client,
+  mode_paiement = 'especes',
+}) {
   const user = (await supabase.auth.getUser()).data.user;
 
   const { data: commande, error: errCommande } = await supabase
@@ -21,7 +33,7 @@ export async function creerCommande({ client, zone_livraison_id, type_livraison,
       client_email: client.email,
       client_telephone: client.telephone,
       client_adresse: client.adresse || null,
-      zone_livraison_id,
+      zone_livraison_id: zone_livraison_id || null,
       type_livraison,
       creneau_livraison,
       sous_total,
@@ -29,7 +41,7 @@ export async function creerCommande({ client, zone_livraison_id, type_livraison,
       pourboire: pourboire || 0,
       total,
       message_client,
-      mode_paiement: 'carte',
+      mode_paiement,
     })
     .select()
     .single();
@@ -55,11 +67,71 @@ export async function creerCommande({ client, zone_livraison_id, type_livraison,
   return commande;
 }
 
-export async function fetchMesCommandes() {
+export async function fetchMesCommandes(userId) {
+  if (!userId) return [];
+
   const { data, error } = await supabase
     .from('commandes')
-    .select('*, commande_lignes(*)')
+    .select('*, commande_lignes(*), zones_livraison(nom, frais_livraison)')
+    .eq('user_id', userId)
     .order('created_at', { ascending: false });
   if (error) throw error;
+  return data;
+}
+
+export async function fetchCommandeByNumero(numero) {
+  const { data, error } = await supabase
+    .from('commandes')
+    .select('*, commande_lignes(*), zones_livraison(nom, frais_livraison, delai_minutes)')
+    .eq('numero', numero)
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Create a Stripe Checkout Session via Supabase Edge Function.
+ * @param {Object} commande - The commande object (from creerCommande)
+ * @param {Array} cartItems - Cart items [{ nom, prix, quantite }]
+ * @returns {{ sessionUrl: string }} - URL to redirect to Stripe Checkout
+ */
+export async function createStripeCheckoutSession(commande, cartItems) {
+  const { data: { session: authSession } } = await supabase.auth.getSession();
+  const token = authSession?.access_token;
+
+  if (!token) {
+    throw new Error('Vous devez être connecté pour payer par carte.');
+  }
+
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const origin = window.location.origin;
+
+  const response = await fetch(
+    `${supabaseUrl}/functions/v1/create-checkout-session`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        commande_id: commande.id,
+        line_items: cartItems.map((item) => ({
+          nom: item.nom,
+          prix_unitaire: item.prix_unitaire,
+          quantite: item.quantite,
+        })),
+        success_url: `${origin}/confirmation/${commande.numero}?payment=success`,
+        cancel_url: `${origin}/checkout?payment=cancelled`,
+      }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || 'Erreur lors de la création de la session de paiement.');
+  }
+
   return data;
 }
