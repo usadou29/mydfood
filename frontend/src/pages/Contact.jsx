@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Clock, Send, Instagram, Facebook, Loader2, CheckCircle } from 'lucide-react';
 import { Button } from '../components/Button';
+import { useToast } from '../context/ToastContext';
 import { envoyerContact, inscrireNewsletter } from '../services/contact';
 import { SEO } from '../components/SEO';
 
@@ -12,6 +13,7 @@ export function Contact() {
     sujet: '',
     message: ''
   });
+  const { addToast } = useToast();
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
@@ -33,6 +35,7 @@ export function Contact() {
       await envoyerContact(formData);
       setSuccess(true);
       setFormData({ nom: '', email: '', sujet: '', message: '' });
+      addToast('Message envoyé avec succès ! Nous vous répondrons sous 24h.', 'success');
       setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
       setError(err.message || 'Erreur lors de l\'envoi du message');
@@ -48,6 +51,7 @@ export function Contact() {
       await inscrireNewsletter(newsletterEmail);
       setNewsletterSuccess(true);
       setNewsletterEmail('');
+      addToast('Inscription à la newsletter réussie !', 'success');
       setTimeout(() => setNewsletterSuccess(false), 5000);
     } catch (err) {
       setNewsletterError(err.message || 'Erreur lors de l\'inscription');

@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, Plus, Minus, X, Info, Loader2 } from 'lucide-react';
+import { SkeletonCardGrid } from '../components/Skeleton';
 import { Button } from '../components/Button';
 import { useCart } from '../context/CartContext';
 import { useSupabaseQuery } from '../hooks/useSupabaseQuery';
+import { useToast } from '../context/ToastContext';
 import { fetchPlats } from '../services/plats';
 import { fetchZonesLivraison } from '../services/commandes';
 import { SEO } from '../components/SEO';
@@ -15,10 +17,10 @@ export function Commander() {
   const { data: zones, loading: loadingZones } = useSupabaseQuery(fetchZonesLivraison);
 
   const { cart, addToCart, updateQuantite, cartTotal, cartCount } = useCart();
+  const { addToast } = useToast();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedZone, setSelectedZone] = useState(null);
   const [showAllergens, setShowAllergens] = useState(null);
-  const [stockAlert, setStockAlert] = useState('');
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -42,8 +44,7 @@ export function Commander() {
       const inCart = cart.find((i) => i.id === plat.id && i.type === 'plat');
       const qtyInCart = inCart ? inCart.quantite : 0;
       if (qtyInCart >= plat.portions_restantes) {
-        setStockAlert(`Stock limité à ${plat.portions_restantes} portion${plat.portions_restantes > 1 ? 's' : ''} pour "${plat.nom}"`);
-        setTimeout(() => setStockAlert(''), 3000);
+        addToast(`Stock limité à ${plat.portions_restantes} portion${plat.portions_restantes > 1 ? 's' : ''} pour "${plat.nom}"`, 'warning');
         return;
       }
     }
@@ -59,8 +60,14 @@ export function Commander() {
 
   if (loadingPlats || loadingZones) {
     return (
-      <div className="min-h-screen bg-cream pt-20 flex items-center justify-center">
-        <Loader2 className="animate-spin text-blue" size={48} />
+      <div className="min-h-screen bg-cream pt-20 pb-32">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <div className="animate-pulse bg-cream-dark rounded h-10 w-64 mx-auto mb-4" />
+            <div className="animate-pulse bg-cream-dark rounded h-4 w-48 mx-auto" />
+          </div>
+          <SkeletonCardGrid count={6} />
+        </div>
       </div>
     );
   }
@@ -97,20 +104,6 @@ export function Commander() {
             Livraison ou retrait sous 24h. Commande minimum : {minimumCommande}€
           </p>
         </motion.div>
-
-        {/* Stock alert */}
-        <AnimatePresence>
-          {stockAlert && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="bg-orange-50 text-orange-700 px-4 py-3 rounded-xl mb-6 text-sm font-medium text-center"
-            >
-              {stockAlert}
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         {/* Zone de livraison */}
         {zones && zones.length > 0 && (
@@ -269,8 +262,7 @@ export function Commander() {
                             onClick={() => {
                               const plat = plats?.find((p) => p.id === item.id);
                               if (plat?.portions_restantes !== null && plat?.portions_restantes !== undefined && item.quantite >= plat.portions_restantes) {
-                                setStockAlert(`Stock limité à ${plat.portions_restantes} pour "${item.nom}"`);
-                                setTimeout(() => setStockAlert(''), 3000);
+                                addToast(`Stock limité à ${plat.portions_restantes} pour "${item.nom}"`, 'warning');
                                 return;
                               }
                               updateQuantite(item.id, 1, item.type);

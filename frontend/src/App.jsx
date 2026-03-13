@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { ToastProvider } from './context/ToastContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -105,9 +106,11 @@ function App() {
     <ErrorBoundary>
       <AuthProvider>
         <CartProvider>
-          <Router>
-            <AppLayout />
-          </Router>
+          <ToastProvider>
+            <Router>
+              <AppLayout />
+            </Router>
+          </ToastProvider>
         </CartProvider>
       </AuthProvider>
     </ErrorBoundary>

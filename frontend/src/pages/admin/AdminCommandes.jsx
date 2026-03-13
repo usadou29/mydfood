@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { fetchAllCommandes, updateCommandeStatut } from '../../services/admin';
 import { StatusBadge } from '../../components/admin/StatusBadge';
 import { Loader2, Search, Eye, X, ChevronDown, Banknote, CreditCard } from 'lucide-react';
+import { SkeletonTable } from '../../components/Skeleton';
 
 const statuts = [
   { value: 'tous', label: 'Tous' },
@@ -101,9 +102,7 @@ export function AdminCommandes() {
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-blue" />
-        </div>
+        <SkeletonTable rows={5} columns={7} />
       ) : (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="overflow-x-auto">

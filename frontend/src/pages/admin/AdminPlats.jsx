@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { fetchAllPlats, createPlat, updatePlat, deletePlat, fetchCategories } from '../../services/admin';
 import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { Loader2, Plus, Pencil, Trash2, X, Search, RefreshCw } from 'lucide-react';
+import { SkeletonTable } from '../../components/Skeleton';
 import { resetStock } from '../../services/admin';
 
 const emptyPlat = {
@@ -136,8 +137,12 @@ export function AdminPlats() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-blue" />
+      <div>
+        <div className="flex items-center justify-between mb-6">
+          <div className="animate-pulse bg-cream-dark rounded h-8 w-48" />
+          <div className="animate-pulse bg-cream-dark rounded h-10 w-32" />
+        </div>
+        <SkeletonTable rows={5} columns={7} />
       </div>
     );
   }

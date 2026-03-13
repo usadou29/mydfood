@@ -7,7 +7,6 @@ import {
   ShoppingCart,
   Star,
   TrendingUp,
-  Loader2,
   ArrowRight,
 } from 'lucide-react';
 
@@ -31,8 +30,29 @@ export function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-blue" />
+      <div>
+        <div className="animate-pulse bg-cream-dark rounded h-8 w-48 mb-6" />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {Array.from({ length: 4 }, (_, i) => (
+            <div key={i} className="bg-white rounded-2xl p-5 shadow-sm">
+              <div className="animate-pulse bg-cream-dark rounded-xl h-10 w-10 mb-3" />
+              <div className="animate-pulse bg-cream-dark rounded h-3 w-16 mb-2" />
+              <div className="animate-pulse bg-cream-dark rounded h-7 w-12" />
+            </div>
+          ))}
+        </div>
+        <div className="animate-pulse bg-cream-dark rounded h-6 w-40 mb-4" />
+        <div className="bg-white rounded-2xl shadow-sm p-4 space-y-3">
+          {Array.from({ length: 3 }, (_, i) => (
+            <div key={i} className="flex items-center justify-between py-2">
+              <div className="flex items-center gap-3">
+                <div className="animate-pulse bg-cream-dark rounded h-4 w-24" />
+                <div className="animate-pulse bg-cream-dark rounded-full h-5 w-20" />
+              </div>
+              <div className="animate-pulse bg-cream-dark rounded h-4 w-16" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

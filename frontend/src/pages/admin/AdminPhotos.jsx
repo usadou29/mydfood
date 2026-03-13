@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { fetchAllPhotos, updatePhoto, createPhoto, deletePhoto } from '../../services/admin';
 import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { Loader2, Pencil, Plus, Trash2, X, Image, ExternalLink, Check } from 'lucide-react';
+import { SkeletonTable } from '../../components/Skeleton';
 
 const emptyPhoto = {
   cle: '',
@@ -124,8 +125,12 @@ export function AdminPhotos() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-blue" />
+      <div>
+        <div className="flex items-center justify-between mb-6">
+          <div className="animate-pulse bg-cream-dark rounded h-8 w-48" />
+          <div className="animate-pulse bg-cream-dark rounded h-10 w-32" />
+        </div>
+        <SkeletonTable rows={5} columns={5} />
       </div>
     );
   }

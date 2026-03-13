@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
-import { Plus, Loader2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useSupabaseQuery } from '../../hooks/useSupabaseQuery';
 import { fetchPlats } from '../../services/plats';
 import { useCart } from '../../context/CartContext';
+import { SkeletonCard } from '../Skeleton';
 
 export function PopularDishes() {
   const { data: plats, loading } = useSupabaseQuery(() => fetchPlats({ populaire: true }));
@@ -39,8 +40,8 @@ export function PopularDishes() {
         </motion.div>
 
         {loading ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="animate-spin text-blue" size={40} />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 4 }, (_, i) => <SkeletonCard key={i} />)}
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -40,6 +40,10 @@ vi.mock('../../components/admin/StatusBadge', () => ({
   StatusBadge: ({ statut }) => <span data-testid="status-badge">{statut}</span>,
 }));
 
+vi.mock('../../context/ToastContext', () => ({
+  useToast: () => ({ addToast: vi.fn(), removeToast: vi.fn() }),
+}));
+
 import { Profile } from '../../pages/Profile';
 
 function renderProfile() {

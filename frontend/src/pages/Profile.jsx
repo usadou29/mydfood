@@ -6,12 +6,15 @@ import {
   ShoppingBag, ClipboardList, ChevronRight,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { fetchMesCommandes } from '../services/commandes';
 import { StatusBadge } from '../components/admin/StatusBadge';
+import { SkeletonProfile, SkeletonOrderList } from '../components/Skeleton';
 
 export function Profile() {
   const navigate = useNavigate();
   const { user, profile, loading: authLoading, signOut, updateProfile } = useAuth();
+  const { addToast } = useToast();
 
   const [activeTab, setActiveTab] = useState('profil');
   const [form, setForm] = useState({
@@ -79,6 +82,7 @@ export function Profile() {
     try {
       await updateProfile(form);
       setSuccess(true);
+      addToast('Profil mis à jour avec succès.', 'success');
       setTimeout(() => setSuccess(false), 3000);
     } catch {
       setError('Erreur lors de la mise à jour. Veuillez réessayer.');
@@ -210,9 +214,7 @@ export function Profile() {
           {activeTab === 'commandes' && (
             <div>
               {loadingCommandes ? (
-                <div className="flex justify-center py-12">
-                  <Loader2 className="animate-spin text-blue" size={32} />
-                </div>
+                <SkeletonOrderList count={3} />
               ) : commandesError ? (
                 <div className="bg-white rounded-2xl shadow-card p-8 text-center">
                   <AlertCircle size={32} className="text-red-400 mx-auto mb-3" />

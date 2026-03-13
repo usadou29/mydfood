@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { fetchPromotions, createPromotion, updatePromotion, deletePromotion } from '../../services/admin';
 import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
 import { Loader2, Plus, Pencil, Trash2, X, Search, Tag, ToggleLeft, ToggleRight } from 'lucide-react';
+import { SkeletonTable } from '../../components/Skeleton';
 
 const emptyPromo = {
   code: '',
@@ -148,8 +149,12 @@ export function AdminPromotions() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="animate-spin text-blue" size={32} />
+      <div>
+        <div className="flex items-center justify-between mb-6">
+          <div className="animate-pulse bg-cream-dark rounded h-8 w-48" />
+          <div className="animate-pulse bg-cream-dark rounded h-10 w-32" />
+        </div>
+        <SkeletonTable rows={5} columns={8} />
       </div>
     );
   }
