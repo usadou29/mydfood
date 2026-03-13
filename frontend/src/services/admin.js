@@ -216,3 +216,38 @@ export async function deletePhoto(id) {
   const { error } = await supabase.from('photos_site').delete().eq('id', id);
   if (error) throw error;
 }
+
+// =====================
+// PROMOTIONS
+// =====================
+
+export async function fetchPromotions() {
+  const { data, error } = await supabase
+    .from('promotions')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data;
+}
+
+export async function createPromotion(promo) {
+  const { data, error } = await supabase.from('promotions').insert(promo).select().single();
+  if (error) throw error;
+  return data;
+}
+
+export async function updatePromotion(id, updates) {
+  const { data, error } = await supabase
+    .from('promotions')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function deletePromotion(id) {
+  const { error } = await supabase.from('promotions').delete().eq('id', id);
+  if (error) throw error;
+}

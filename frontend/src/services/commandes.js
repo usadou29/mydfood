@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import { incrementerUsage } from './promotions';
 
 // ── Notification helper (fire-and-forget) ───────────
 
@@ -59,6 +60,8 @@ export async function creerCommande({
   total,
   message_client,
   mode_paiement = 'especes',
+  code_promo = null,
+  reduction = 0,
 }) {
   const user = (await supabase.auth.getUser()).data.user;
 
@@ -79,6 +82,8 @@ export async function creerCommande({
       total,
       message_client,
       mode_paiement,
+      code_promo,
+      reduction,
     })
     .select()
     .single();
@@ -111,6 +116,19 @@ export async function creerCommande({
 
   // Trigger order creation email (fire-and-forget)
   triggerNotification(commande.id, 'creation');
+
+  // Increment promo usage counter (fire-and-forget)
+  if (code_promo) {
+    supabase
+      .from('promotions')
+      .select('id')
+      .eq('code', code_promo.toUpperCase())
+      .single()
+      .then(({ data: promo }) => {
+        if (promo) incrementerUsage(promo.id);
+      })
+      .catch(() => {}); // Silent — don't block order
+  }
 
   return commande;
 }

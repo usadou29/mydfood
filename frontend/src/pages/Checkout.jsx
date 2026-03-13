@@ -11,6 +11,7 @@ import { useAuth } from '../context/AuthContext';
 import { useSupabaseQuery } from '../hooks/useSupabaseQuery';
 import { fetchZonesLivraison, creerCommande, createStripeCheckoutSession } from '../services/commandes';
 import { isStripeConfigured } from '../lib/stripe';
+import { validerCodePromo } from '../services/promotions';
 
 const CRENEAUX = [
   '12h00 - 13h00',
@@ -86,6 +87,13 @@ export function Checkout() {
   const [modePaiement, setModePaiement] = useState('especes');
   const [searchParams] = useSearchParams();
 
+  // Promo code
+  const [codePromo, setCodePromo] = useState('');
+  const [promoApplied, setPromoApplied] = useState(null); // objet promo complet
+  const [reduction, setReduction] = useState(0);
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [promoError, setPromoError] = useState('');
+
   // Show message if returning from cancelled Stripe payment
   useEffect(() => {
     if (searchParams.get('payment') === 'cancelled') {
@@ -129,7 +137,7 @@ export function Checkout() {
   const minimumCommande = typeLivraison === 'livraison' && selectedZone
     ? Number(selectedZone.minimum_commande)
     : 0;
-  const total = cartTotal + fraisLivraison;
+  const total = cartTotal + fraisLivraison - reduction;
   const canOrder = typeLivraison === 'retrait' || cartTotal >= minimumCommande;
 
   // Validation per step
@@ -208,6 +216,8 @@ export function Checkout() {
         total,
         message_client: messageClient || null,
         mode_paiement: modePaiement,
+        code_promo: promoApplied?.code || null,
+        reduction,
       });
 
       // If paying by card → redirect to Stripe Checkout
@@ -251,6 +261,36 @@ export function Checkout() {
 
   const handleInfoChange = (e) => {
     setClientInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleAppliquerPromo = async () => {
+    setPromoError('');
+    setPromoLoading(true);
+    try {
+      const result = await validerCodePromo(codePromo, cartTotal);
+      if (result.valid) {
+        setPromoApplied(result.promo);
+        setReduction(result.montantReduction);
+        setPromoError('');
+      } else {
+        setPromoApplied(null);
+        setReduction(0);
+        setPromoError(result.message);
+      }
+    } catch {
+      setPromoError('Erreur lors de la vérification du code promo.');
+      setPromoApplied(null);
+      setReduction(0);
+    } finally {
+      setPromoLoading(false);
+    }
+  };
+
+  const handleRetirerPromo = () => {
+    setPromoApplied(null);
+    setReduction(0);
+    setCodePromo('');
+    setPromoError('');
   };
 
   if (loadingZones) {
@@ -539,6 +579,56 @@ export function Checkout() {
                     />
                   </div>
 
+                  {/* Code promo */}
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-text mb-1.5">
+                      Code promo
+                    </label>
+                    {promoApplied ? (
+                      <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl p-3">
+                        <CheckCircle size={18} className="text-green-600 flex-shrink-0" />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-green-800">
+                            Code « {promoApplied.code} » appliqué
+                          </p>
+                          <p className="text-xs text-green-600">
+                            -{reduction.toFixed(2)}€
+                            {promoApplied.type_reduction === 'pourcentage' && ` (${promoApplied.valeur}%)`}
+                          </p>
+                        </div>
+                        <button
+                          onClick={handleRetirerPromo}
+                          className="text-xs text-red-500 hover:text-red-700 font-medium"
+                        >
+                          Retirer
+                        </button>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={codePromo}
+                            onChange={(e) => { setCodePromo(e.target.value); setPromoError(''); }}
+                            placeholder="Entrez votre code promo"
+                            className="flex-1 px-4 py-3 rounded-xl border-2 border-cream-dark bg-cream focus:border-blue focus:bg-white focus:outline-none transition-colors text-sm uppercase"
+                          />
+                          <button
+                            onClick={handleAppliquerPromo}
+                            disabled={promoLoading || !codePromo.trim()}
+                            className="px-5 py-3 bg-blue text-white rounded-xl text-sm font-medium hover:bg-blue/90 transition-colors disabled:opacity-50 flex items-center gap-1.5"
+                          >
+                            {promoLoading && <Loader2 size={14} className="animate-spin" />}
+                            Appliquer
+                          </button>
+                        </div>
+                        {promoError && (
+                          <p className="text-red-500 text-xs mt-1.5">{promoError}</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
                   {/* Mode de paiement */}
                   <div className="mb-6">
                     <label className="block text-sm font-medium text-text mb-2">Mode de paiement</label>
@@ -675,6 +765,12 @@ export function Checkout() {
                     <div className="flex justify-between text-sm text-text">
                       <span>Livraison</span>
                       <span>{fraisLivraison > 0 ? `${fraisLivraison.toFixed(2)}€` : 'Gratuit'}</span>
+                    </div>
+                  )}
+                  {reduction > 0 && (
+                    <div className="flex justify-between text-sm text-green-600 font-medium">
+                      <span>Réduction</span>
+                      <span>-{reduction.toFixed(2)}€</span>
                     </div>
                   )}
                   <div className="flex justify-between font-bold text-lg pt-2 border-t border-cream-dark">

@@ -7,6 +7,7 @@ import {
   ShoppingCart,
   Star,
   Image,
+  Tag,
   LogOut,
   Menu,
   X,
@@ -17,6 +18,7 @@ const navItems = [
   { path: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { path: '/admin/plats', label: 'Plats', icon: UtensilsCrossed },
   { path: '/admin/commandes', label: 'Commandes', icon: ShoppingCart },
+  { path: '/admin/promotions', label: 'Promotions', icon: Tag },
   { path: '/admin/temoignages', label: 'Témoignages', icon: Star },
   { path: '/admin/photos', label: 'Photos du site', icon: Image },
 ];
