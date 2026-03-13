@@ -1,9 +1,12 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Search } from 'lucide-react';
+import { ArrowRight, Search, ChefHat } from 'lucide-react';
 import { Logo } from '../Logo';
 
 export function HeroSection() {
+  const [heroImgError, setHeroImgError] = useState(false);
+
   return (
     <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
       <div className="absolute top-20 right-0 w-96 h-96 bg-yellow/10 rounded-full blur-3xl" />
@@ -70,11 +73,19 @@ export function HeroSection() {
             <div className="relative w-80 h-80 sm:w-96 sm:h-96 lg:w-[450px] lg:h-[450px] mx-auto">
               <div className="absolute inset-0 rounded-full bg-yellow/30 animate-pulse" />
               <div className="absolute inset-4 rounded-full bg-cream-dark overflow-hidden">
-                <img
-                  src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=800&h=800&fit=crop"
-                  alt="Poulet DG camerounais"
-                  className="w-full h-full object-cover"
-                />
+                {heroImgError ? (
+                  <div className="w-full h-full flex items-center justify-center bg-yellow/20">
+                    <ChefHat size={80} className="text-yellow-dark/50" />
+                  </div>
+                ) : (
+                  <img
+                    src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=800&h=800&fit=crop"
+                    alt=""
+                    className="w-full h-full object-cover"
+                    onError={() => setHeroImgError(true)}
+                    loading="eager"
+                  />
+                )}
               </div>
               <div className="absolute -top-4 -right-4 bg-white rounded-2xl shadow-card p-4 animate-float">
                 <div className="flex items-center gap-2">

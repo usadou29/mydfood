@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CalendarDays, Phone } from 'lucide-react';
+import { CalendarDays, Phone, UtensilsCrossed } from 'lucide-react';
 
 export function ReservationCTA() {
+  const [imgError, setImgError] = useState(false);
+
   return (
     <section className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -43,12 +46,20 @@ export function ReservationCTA() {
             </div>
 
             <div className="hidden lg:flex justify-end">
-              <div className="w-64 h-64 rounded-full overflow-hidden border-4 border-white/20">
-                <img
-                  src="https://images.unsplash.com/photo-1555244162-803279f50793?w=600&h=600&fit=crop"
-                  alt="Buffet camerounais pour événement"
-                  className="w-full h-full object-cover"
-                />
+              <div className="w-64 h-64 rounded-full overflow-hidden border-4 border-white/20 bg-white/10">
+                {imgError ? (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <UtensilsCrossed size={64} className="text-white/40" />
+                  </div>
+                ) : (
+                  <img
+                    src="https://images.unsplash.com/photo-1555244162-803279f50793?w=600&h=600&fit=crop"
+                    alt=""
+                    className="w-full h-full object-cover"
+                    onError={() => setImgError(true)}
+                    loading="lazy"
+                  />
+                )}
               </div>
             </div>
           </div>

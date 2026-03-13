@@ -1,64 +1,80 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 
-:root {
+@theme {
+  /* Colors */
   --color-cream: #FFF8F2;
   --color-cream-dark: #FFF0E6;
   --color-yellow: #F4C25A;
   --color-yellow-dark: #C08A1E;
+  --color-yellow-light: #F9D78A;
   --color-yellow-warning: #92600A;
   --color-blue: #2F79A0;
   --color-blue-dark: #25668A;
+  --color-blue-light: #4A9BC4;
   --color-text: #1C1C1C;
   --color-text-light: #6A6A6A;
-  --color-white: #FFFFFF;
+
+  /* Fonts */
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Baloo 2', cursive;
+  --font-serif: 'Playfair Display', serif;
+
+  /* Shadows */
   --shadow-soft: 0 8px 30px rgba(45, 44, 50, 0.06);
   --shadow-card: 0 4px 20px rgba(45, 44, 50, 0.08);
   --shadow-hover: 0 12px 40px rgba(45, 44, 50, 0.12);
+
+  /* Border Radius */
+  --radius-xl: 14px;
+  --radius-2xl: 18px;
+  --radius-3xl: 24px;
 }
 
-* {
-  box-sizing: border-box;
-}
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
 
-html {
-  scroll-behavior: smooth;
-}
+  html {
+    scroll-behavior: smooth;
+  }
 
-body {
-  margin: 0;
-  font-family: 'Inter', system-ui, sans-serif;
-  background-color: var(--color-cream);
-  color: var(--color-text);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: var(--color-cream);
+    color: var(--color-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Baloo 2', cursive;
-  margin: 0;
-  font-weight: 700;
-}
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Baloo 2', cursive;
+    margin: 0;
+    font-weight: 700;
+  }
 
-p {
-  margin: 0;
-}
+  p {
+    margin: 0;
+  }
 
-a {
-  text-decoration: none;
-  color: inherit;
-}
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
 
-button {
-  font-family: 'Inter', system-ui, sans-serif;
-  cursor: pointer;
-  border: none;
-  background: none;
-}
+  button {
+    font-family: 'Inter', system-ui, sans-serif;
+    cursor: pointer;
+    border: none;
+    background: none;
+  }
 
-img {
-  max-width: 100%;
-  display: block;
+  img {
+    max-width: 100%;
+    display: block;
+  }
 }
 
 /* Custom scrollbar */
@@ -100,50 +116,50 @@ img {
   }
 }
 
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out forwards;
-}
+@layer utilities {
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
 
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
 
-/* Card hover effect */
-.card-hover {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+  .card-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
 
-.card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-hover);
-}
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+  }
 
-/* Button styles */
-.btn-primary {
-  background-color: var(--color-yellow);
-  color: var(--color-text);
-  padding: 14px 28px;
-  border-radius: 12px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
+  .btn-primary {
+    background-color: var(--color-yellow);
+    color: var(--color-text);
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
 
-.btn-primary:hover {
-  background-color: var(--color-yellow-dark);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-soft);
-}
+  .btn-primary:hover {
+    background-color: var(--color-yellow-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
+  }
 
-.btn-secondary {
-  background-color: transparent;
-  color: var(--color-text);
-  padding: 14px 28px;
-  border-radius: 12px;
-  font-weight: 600;
-  border: 2px solid var(--color-yellow);
-  transition: all 0.3s ease;
-}
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--color-text);
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    border: 2px solid var(--color-yellow);
+    transition: all 0.3s ease;
+  }
 
-.btn-secondary:hover {
-  background-color: var(--color-yellow);
+  .btn-secondary:hover {
+    background-color: var(--color-yellow);
+  }
 }

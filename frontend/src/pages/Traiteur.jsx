@@ -61,7 +61,7 @@ export function Traiteur() {
       {/* Hero */}
       <section className="relative h-[60vh] flex items-center">
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-center bg-blue-dark"
           style={{
             backgroundImage: 'url(https://images.unsplash.com/photo-1555244162-803279f50793?w=1920&h=1080&fit=crop)',
           }}

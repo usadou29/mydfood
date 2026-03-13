@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Check } from 'lucide-react';
+import { ArrowRight, Check, Heart } from 'lucide-react';
 
 export function AboutSection() {
+  const [imgError, setImgError] = useState(false);
   return (
     <section className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -16,11 +18,19 @@ export function AboutSection() {
             <div className="relative w-72 h-72 sm:w-80 sm:h-80 mx-auto">
               <div className="absolute inset-0 rounded-full bg-blue/10" />
               <div className="absolute inset-4 rounded-full overflow-hidden">
-                <img
-                  src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&h=600&fit=crop"
-                  alt="Tata Dow en cuisine"
-                  className="w-full h-full object-cover"
-                />
+                {imgError ? (
+                  <div className="w-full h-full flex items-center justify-center bg-blue/10">
+                    <Heart size={64} className="text-blue/30" />
+                  </div>
+                ) : (
+                  <img
+                    src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&h=600&fit=crop"
+                    alt=""
+                    className="w-full h-full object-cover"
+                    onError={() => setImgError(true)}
+                    loading="lazy"
+                  />
+                )}
               </div>
             </div>
             <div className="absolute bottom-8 right-8 bg-yellow rounded-2xl p-4 shadow-card">
