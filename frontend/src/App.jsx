@@ -9,36 +9,69 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { LoadingFallback } from './components/LoadingFallback';
 
-// Home en import statique (page d'atterrissage, FCP critique)
+// Home et Login en imports statiques (pages critiques pour UX)
 import { Home } from './pages/Home';
+import { Login } from './pages/Login';
+import { Register } from './pages/Register';
+
+// --- Helper: lazy import avec retry + logging ---
+function lazyRetry(importFn, name) {
+  return lazy(() =>
+    importFn().catch((err) => {
+      console.error(`[LazyLoad] Erreur chargement ${name}:`, err);
+      // Retry une fois après 1s
+      return new Promise((resolve) => setTimeout(resolve, 1000)).then(() =>
+        importFn().catch((retryErr) => {
+          console.error(`[LazyLoad] Retry échoué ${name}:`, retryErr);
+          // Retourner un composant d'erreur en fallback
+          return {
+            default: () => (
+              <div className="min-h-screen bg-cream flex items-center justify-center px-4">
+                <div className="bg-white rounded-2xl shadow-card p-8 max-w-md text-center">
+                  <p className="text-red-600 font-medium mb-4">
+                    Erreur de chargement de la page.
+                  </p>
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="btn-primary"
+                  >
+                    Recharger
+                  </button>
+                </div>
+              </div>
+            ),
+          };
+        })
+      );
+    })
+  );
+}
 
 // --- Lazy loading des pages publiques ---
-const Commander = lazy(() => import('./pages/Commander').then(m => ({ default: m.Commander })));
-const MenusFamille = lazy(() => import('./pages/MenusFamille').then(m => ({ default: m.MenusFamille })));
-const Traiteur = lazy(() => import('./pages/Traiteur').then(m => ({ default: m.Traiteur })));
-const Evenements = lazy(() => import('./pages/Evenements').then(m => ({ default: m.Evenements })));
-const Contact = lazy(() => import('./pages/Contact').then(m => ({ default: m.Contact })));
-const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
-const Register = lazy(() => import('./pages/Register').then(m => ({ default: m.Register })));
-const Profile = lazy(() => import('./pages/Profile').then(m => ({ default: m.Profile })));
-const Checkout = lazy(() => import('./pages/Checkout').then(m => ({ default: m.Checkout })));
-const OrderConfirmation = lazy(() => import('./pages/OrderConfirmation').then(m => ({ default: m.OrderConfirmation })));
-const NotFound = lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })));
-const MentionsLegales = lazy(() => import('./pages/MentionsLegales').then(m => ({ default: m.MentionsLegales })));
-const CGV = lazy(() => import('./pages/CGV').then(m => ({ default: m.CGV })));
-const APropos = lazy(() => import('./pages/APropos').then(m => ({ default: m.APropos })));
-const PolitiqueConfidentialite = lazy(() => import('./pages/PolitiqueConfidentialite').then(m => ({ default: m.PolitiqueConfidentialite })));
-const FAQ = lazy(() => import('./pages/FAQ').then(m => ({ default: m.FAQ })));
-const ChefPrive = lazy(() => import('./pages/ChefPrive').then(m => ({ default: m.ChefPrive })));
+const Commander = lazyRetry(() => import('./pages/Commander').then(m => ({ default: m.Commander })), 'Commander');
+const MenusFamille = lazyRetry(() => import('./pages/MenusFamille').then(m => ({ default: m.MenusFamille })), 'MenusFamille');
+const Traiteur = lazyRetry(() => import('./pages/Traiteur').then(m => ({ default: m.Traiteur })), 'Traiteur');
+const Evenements = lazyRetry(() => import('./pages/Evenements').then(m => ({ default: m.Evenements })), 'Evenements');
+const Contact = lazyRetry(() => import('./pages/Contact').then(m => ({ default: m.Contact })), 'Contact');
+const Profile = lazyRetry(() => import('./pages/Profile').then(m => ({ default: m.Profile })), 'Profile');
+const Checkout = lazyRetry(() => import('./pages/Checkout').then(m => ({ default: m.Checkout })), 'Checkout');
+const OrderConfirmation = lazyRetry(() => import('./pages/OrderConfirmation').then(m => ({ default: m.OrderConfirmation })), 'OrderConfirmation');
+const NotFound = lazyRetry(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })), 'NotFound');
+const MentionsLegales = lazyRetry(() => import('./pages/MentionsLegales').then(m => ({ default: m.MentionsLegales })), 'MentionsLegales');
+const CGV = lazyRetry(() => import('./pages/CGV').then(m => ({ default: m.CGV })), 'CGV');
+const APropos = lazyRetry(() => import('./pages/APropos').then(m => ({ default: m.APropos })), 'APropos');
+const PolitiqueConfidentialite = lazyRetry(() => import('./pages/PolitiqueConfidentialite').then(m => ({ default: m.PolitiqueConfidentialite })), 'PolitiqueConfidentialite');
+const FAQ = lazyRetry(() => import('./pages/FAQ').then(m => ({ default: m.FAQ })), 'FAQ');
+const ChefPrive = lazyRetry(() => import('./pages/ChefPrive').then(m => ({ default: m.ChefPrive })), 'ChefPrive');
 
 // --- Lazy loading des pages admin ---
-const AdminLayout = lazy(() => import('./components/admin/AdminLayout').then(m => ({ default: m.AdminLayout })));
-const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
-const AdminPlats = lazy(() => import('./pages/admin/AdminPlats').then(m => ({ default: m.AdminPlats })));
-const AdminCommandes = lazy(() => import('./pages/admin/AdminCommandes').then(m => ({ default: m.AdminCommandes })));
-const AdminTemoignages = lazy(() => import('./pages/admin/AdminTemoignages').then(m => ({ default: m.AdminTemoignages })));
-const AdminPhotos = lazy(() => import('./pages/admin/AdminPhotos').then(m => ({ default: m.AdminPhotos })));
-const AdminPromotions = lazy(() => import('./pages/admin/AdminPromotions').then(m => ({ default: m.AdminPromotions })));
+const AdminLayout = lazyRetry(() => import('./components/admin/AdminLayout').then(m => ({ default: m.AdminLayout })), 'AdminLayout');
+const AdminDashboard = lazyRetry(() => import('./pages/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })), 'AdminDashboard');
+const AdminPlats = lazyRetry(() => import('./pages/admin/AdminPlats').then(m => ({ default: m.AdminPlats })), 'AdminPlats');
+const AdminCommandes = lazyRetry(() => import('./pages/admin/AdminCommandes').then(m => ({ default: m.AdminCommandes })), 'AdminCommandes');
+const AdminTemoignages = lazyRetry(() => import('./pages/admin/AdminTemoignages').then(m => ({ default: m.AdminTemoignages })), 'AdminTemoignages');
+const AdminPhotos = lazyRetry(() => import('./pages/admin/AdminPhotos').then(m => ({ default: m.AdminPhotos })), 'AdminPhotos');
+const AdminPromotions = lazyRetry(() => import('./pages/admin/AdminPromotions').then(m => ({ default: m.AdminPromotions })), 'AdminPromotions');
 
 function AppLayout() {
   const location = useLocation();

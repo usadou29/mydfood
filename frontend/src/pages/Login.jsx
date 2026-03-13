@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LogIn, Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -7,18 +7,22 @@ import { LogoSmall } from '../components/Logo';
 
 export function Login() {
   const navigate = useNavigate();
-  const { signIn, user } = useAuth();
+  const location = useLocation();
+  const { signIn, user, isAdmin, profileLoading, profile } = useAuth();
 
   const [form, setForm] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Redirect if already logged in
-  if (user) {
-    navigate('/', { replace: true });
-    return null;
-  }
+  // Redirect if already logged in AND profile is loaded (not loading)
+  // On attend que le profil soit chargé pour connaître isAdmin
+  useEffect(() => {
+    if (user && !profileLoading && profile) {
+      const from = location.state?.from || (isAdmin ? '/admin' : '/');
+      navigate(from, { replace: true });
+    }
+  }, [user, isAdmin, profileLoading, profile, navigate, location]);
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -34,8 +38,12 @@ export function Login() {
     setLoading(true);
     setError('');
     try {
+      // signIn charge le profil automatiquement (await loadProfile dans AuthContext)
+      // donc isAdmin sera à jour après cet appel
       await signIn({ email: form.email, password: form.password });
-      navigate('/');
+
+      // Note : la redirection se fait via le useEffect ci-dessus
+      // qui réagit au changement de user/isAdmin
     } catch (err) {
       const msg = err?.message || '';
       if (msg.includes('Invalid login')) {
@@ -45,7 +53,6 @@ export function Login() {
       } else {
         setError('Erreur de connexion. Veuillez réessayer.');
       }
-    } finally {
       setLoading(false);
     }
   };

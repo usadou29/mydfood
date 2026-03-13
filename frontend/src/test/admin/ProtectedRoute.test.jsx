@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import { render, screen, cleanup } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ProtectedRoute } from '../../components/ProtectedRoute';
 
@@ -7,6 +7,10 @@ const mockAuth = { user: null, isAdmin: false, loading: false };
 vi.mock('../../context/AuthContext', () => ({
   useAuth: () => mockAuth,
 }));
+
+afterEach(() => {
+  cleanup();
+});
 
 function renderWith(children, route = '/admin') {
   return render(

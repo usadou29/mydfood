@@ -1,9 +1,10 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Loader2 } from 'lucide-react';
 
 export function ProtectedRoute({ children }) {
   const { user, isAdmin, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -14,7 +15,7 @@ export function ProtectedRoute({ children }) {
   }
 
   if (!user || !isAdmin) {
-    return <Navigate to="/connexion" replace />;
+    return <Navigate to="/connexion" state={{ from: location.pathname }} replace />;
   }
 
   return children;
