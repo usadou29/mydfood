@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Clock, Send, Instagram, Facebook, Loader2, CheckCircle } from 'lucide-react';
 import { Button } from '../components/Button';
 import { envoyerContact, inscrireNewsletter } from '../services/contact';
+import { SEO } from '../components/SEO';
 
 export function Contact() {
   const [formData, setFormData] = useState({
@@ -55,6 +56,11 @@ export function Contact() {
 
   return (
     <div className="min-h-screen bg-cream pt-20">
+      <SEO
+        title="Contact"
+        description="Contactez DFOOD by Tata Dow. Questions, commandes, devis traiteur. Téléphone, email, WhatsApp. Réponse sous 24h."
+        canonical="/contact"
+      />
       {/* Hero */}
       <section className="bg-blue text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

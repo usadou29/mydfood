@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { SEO } from '../components/SEO';
 
 export function MentionsLegales() {
   useEffect(() => {
@@ -8,6 +9,11 @@ export function MentionsLegales() {
 
   return (
     <div className="min-h-screen bg-cream pt-20">
+      <SEO
+        title="Mentions Légales"
+        description="Mentions légales du site DFOOD by Tata Dow. Éditeur, hébergement, propriété intellectuelle et données personnelles."
+        canonical="/mentions-legales"
+      />
       <section className="py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div

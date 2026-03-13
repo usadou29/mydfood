@@ -31,6 +31,8 @@ export function Navbar() {
     { path: '/menus-famille', label: 'Menus Famille' },
     { path: '/traiteur', label: 'Traiteur' },
     { path: '/evenements', label: 'Événements' },
+    { path: '/chef-prive', label: 'Chef Privé' },
+    { path: '/a-propos', label: 'À propos' },
     { path: '/contact', label: 'Contact' },
   ];
 

@@ -18,6 +18,10 @@ import { OrderConfirmation } from './pages/OrderConfirmation';
 import { NotFound } from './pages/NotFound';
 import { MentionsLegales } from './pages/MentionsLegales';
 import { CGV } from './pages/CGV';
+import { APropos } from './pages/APropos';
+import { PolitiqueConfidentialite } from './pages/PolitiqueConfidentialite';
+import { FAQ } from './pages/FAQ';
+import { ChefPrive } from './pages/ChefPrive';
 import { AdminLayout } from './components/admin/AdminLayout';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminPlats } from './pages/admin/AdminPlats';
@@ -69,6 +73,10 @@ function AppLayout() {
           <Route path="/confirmation/:numero" element={<OrderConfirmation />} />
           <Route path="/mentions-legales" element={<MentionsLegales />} />
           <Route path="/cgv" element={<CGV />} />
+          <Route path="/a-propos" element={<APropos />} />
+          <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/chef-prive" element={<ChefPrive />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

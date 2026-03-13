@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /profil
+Disallow: /checkout
+
+Sitemap: https://mydfood.com/sitemap.xml

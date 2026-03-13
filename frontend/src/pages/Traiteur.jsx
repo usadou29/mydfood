@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Calendar, Users, MapPin, Send, Loader2, CheckCircle } from 'lucide-react';
 import { Button } from '../components/Button';
 import { envoyerDevisTraiteur } from '../services/contact';
+import { SEO } from '../components/SEO';
 
 export function Traiteur() {
   const [formData, setFormData] = useState({
@@ -52,6 +53,11 @@ export function Traiteur() {
 
   return (
     <div className="min-h-screen bg-cream pt-20">
+      <SEO
+        title="Service Traiteur"
+        description="Service traiteur camerounais pour vos événements. Mariages, anniversaires, séminaires. Cuisine 100% Halal, devis gratuit sous 24h."
+        canonical="/traiteur"
+      />
       {/* Hero */}
       <section className="relative h-[60vh] flex items-center">
         <div

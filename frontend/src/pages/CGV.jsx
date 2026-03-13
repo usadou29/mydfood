@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { SEO } from '../components/SEO';
 
 export function CGV() {
   useEffect(() => {
@@ -8,6 +9,11 @@ export function CGV() {
 
   return (
     <div className="min-h-screen bg-cream pt-20">
+      <SEO
+        title="Conditions Générales de Vente"
+        description="Conditions générales de vente de DFOOD by Tata Dow. Commandes, livraison, paiement, retours et réclamations."
+        canonical="/cgv"
+      />
       <section className="py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div

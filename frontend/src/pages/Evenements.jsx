@@ -4,6 +4,7 @@ import { Calendar, MapPin, Clock, Ticket, Users, Loader2, CheckCircle } from 'lu
 import { Button } from '../components/Button';
 import { useSupabaseQuery } from '../hooks/useSupabaseQuery';
 import { fetchEvenements, reserverEvenement } from '../services/evenements';
+import { SEO } from '../components/SEO';
 
 export function Evenements() {
   const { data: evenements, loading, error } = useSupabaseQuery(fetchEvenements);
@@ -63,6 +64,11 @@ export function Evenements() {
 
   return (
     <div className="min-h-screen bg-cream pt-20">
+      <SEO
+        title="Événements"
+        description="Découvrez les événements DFOOD : dégustations, soirées culinaires camerounaises, ateliers cuisine. Réservez votre place en ligne."
+        canonical="/evenements"
+      />
       {/* Hero */}
       <section className="bg-yellow py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

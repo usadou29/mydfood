@@ -7,6 +7,7 @@ import { useCart } from '../context/CartContext';
 import { useSupabaseQuery } from '../hooks/useSupabaseQuery';
 import { fetchPlats } from '../services/plats';
 import { fetchZonesLivraison } from '../services/commandes';
+import { SEO } from '../components/SEO';
 
 export function Commander() {
   const navigate = useNavigate();
@@ -77,6 +78,11 @@ export function Commander() {
 
   return (
     <div className="min-h-screen bg-cream pt-20 pb-32">
+      <SEO
+        title="Commander"
+        description="Commandez vos plats camerounais préférés en ligne. Livraison en Île-de-France sous 24h. Viandes 100% Halal, fait maison."
+        canonical="/commander"
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div

@@ -27,11 +27,15 @@ export function Footer() {
       { label: 'Menus Famille', path: '/menus-famille' },
       { label: 'Traiteur', path: '/traiteur' },
       { label: 'Événements', path: '/evenements' },
+      { label: 'Chef Privé', path: '/chef-prive' },
     ],
     company: [
+      { label: 'À propos', path: '/a-propos' },
+      { label: 'FAQ', path: '/faq' },
       { label: 'Contact', path: '/contact' },
       { label: 'Mentions légales', path: '/mentions-legales' },
       { label: 'CGV', path: '/cgv' },
+      { label: 'Confidentialité', path: '/politique-confidentialite' },
     ],
     support: [
       { label: 'Contact', path: '/contact' },

@@ -5,6 +5,7 @@ import { Button } from '../components/Button';
 import { useCart } from '../context/CartContext';
 import { useSupabaseQuery } from '../hooks/useSupabaseQuery';
 import { fetchMenusFamille } from '../services/menus';
+import { SEO } from '../components/SEO';
 
 export function MenusFamille() {
   const { data: menusFamille, loading, error } = useSupabaseQuery(fetchMenusFamille);
@@ -45,6 +46,11 @@ export function MenusFamille() {
 
   return (
     <div className="min-h-screen bg-cream pt-20">
+      <SEO
+        title="Menus Famille"
+        description="Menus famille DFOOD : repas complets pour 4 à 6 personnes. Cuisine camerounaise Halal livrée chez vous en Île-de-France."
+        canonical="/menus-famille"
+      />
       {/* Hero */}
       <section className="bg-blue text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
