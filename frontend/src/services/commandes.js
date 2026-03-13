@@ -99,7 +99,15 @@ export async function creerCommande({
     .from('commande_lignes')
     .insert(lignes);
 
-  if (errLignes) throw errLignes;
+  if (errLignes) {
+    // Stock insufficient — the DB trigger raises an exception
+    if (errLignes.message && errLignes.message.includes('portions disponibles')) {
+      // Clean up the orphan order
+      await supabase.from('commandes').delete().eq('id', commande.id);
+      throw new Error('STOCK_INSUFFISANT');
+    }
+    throw errLignes;
+  }
 
   // Trigger order creation email (fire-and-forget)
   triggerNotification(commande.id, 'creation');

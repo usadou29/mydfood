@@ -198,6 +198,39 @@ describe('commandes service', () => {
       const insertCall = mockInnerInsert.mock.calls[0][0];
       expect(insertCall.mode_paiement).toBe('especes');
     });
+
+    it('throws STOCK_INSUFFISANT and cleans up orphan order on stock error', async () => {
+      mockGetUser.mockResolvedValueOnce({ data: { user: { id: 'u1' } } });
+      // commandes insert succeeds
+      mockFrom.mockReturnValueOnce({
+        insert: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({ data: { id: 50, numero: 'DF-050' }, error: null }),
+          }),
+        }),
+      });
+      // commande_lignes insert fails with stock error
+      mockFrom.mockReturnValueOnce({
+        insert: vi.fn().mockResolvedValue({
+          error: { message: 'Plus assez de portions disponibles pour ce plat' },
+        }),
+      });
+      // delete orphan order
+      const mockDeleteEq = vi.fn().mockResolvedValue({ error: null });
+      mockFrom.mockReturnValueOnce({
+        delete: vi.fn().mockReturnValue({ eq: mockDeleteEq }),
+      });
+
+      await expect(creerCommande({
+        client: { nom: 'A', email: 'a@a.com', telephone: '06' },
+        type_livraison: 'retrait',
+        items: [{ nom: 'X', prix_unitaire: 5, quantite: 10 }],
+        sous_total: 50, frais_livraison: 0, total: 50,
+      })).rejects.toThrow('STOCK_INSUFFISANT');
+
+      // Verify orphan commande was deleted
+      expect(mockDeleteEq).toHaveBeenCalledWith('id', 50);
+    });
   });
 
   describe('createStripeCheckoutSession', () => {

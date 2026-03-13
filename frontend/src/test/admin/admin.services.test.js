@@ -58,6 +58,7 @@ import {
   createPlat,
   updatePlat,
   deletePlat,
+  resetStock,
   fetchCategories,
   fetchAllCommandes,
   updateCommandeStatut,
@@ -111,6 +112,26 @@ describe('Admin Service - Plats', () => {
   it('fetchAllPlats throws on error', async () => {
     mockOrder.mockResolvedValue({ data: null, error: { message: 'DB error' } });
     await expect(fetchAllPlats()).rejects.toThrow();
+  });
+
+  it('resetStock resets portions_restantes to portions_max', async () => {
+    // First call: fetch portions_max
+    mockSingle.mockResolvedValueOnce({ data: { portions_max: 30 }, error: null });
+    // Second call: update → select → single
+    mockSingle.mockResolvedValueOnce({ data: { id: 1, portions_restantes: 30, disponible: true }, error: null });
+
+    const result = await resetStock(1);
+    expect(mockUpdate).toHaveBeenCalledWith({ portions_restantes: 30, disponible: true });
+    expect(result.portions_restantes).toBe(30);
+  });
+
+  it('resetStock does nothing for unlimited dishes', async () => {
+    mockSingle.mockResolvedValueOnce({ data: { portions_max: null }, error: null });
+
+    const result = await resetStock(1);
+    expect(result).toBeUndefined();
+    // update should not have been called (only the select for fetch)
+    expect(mockUpdate).not.toHaveBeenCalled();
   });
 });
 

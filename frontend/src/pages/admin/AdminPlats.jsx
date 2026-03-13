@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { fetchAllPlats, createPlat, updatePlat, deletePlat, fetchCategories } from '../../services/admin';
 import { ConfirmDialog } from '../../components/admin/ConfirmDialog';
-import { Loader2, Plus, Pencil, Trash2, X, Search } from 'lucide-react';
+import { Loader2, Plus, Pencil, Trash2, X, Search, RefreshCw } from 'lucide-react';
+import { resetStock } from '../../services/admin';
 
 const emptyPlat = {
   nom: '',
@@ -12,6 +13,8 @@ const emptyPlat = {
   allergens: [],
   populaire: false,
   disponible: true,
+  portions_max: '',
+  portions_restantes: '',
 };
 
 export function AdminPlats() {
@@ -58,6 +61,8 @@ export function AdminPlats() {
       allergens: plat.allergens || [],
       populaire: plat.populaire,
       disponible: plat.disponible,
+      portions_max: plat.portions_max ?? '',
+      portions_restantes: plat.portions_restantes ?? '',
     });
     setError('');
     setShowForm(true);
@@ -73,10 +78,20 @@ export function AdminPlats() {
     setSaving(true);
     setError('');
     try {
+      const portionsMax = form.portions_max !== '' ? Number(form.portions_max) : null;
+      let portionsRestantes = form.portions_restantes !== '' ? Number(form.portions_restantes) : null;
+
+      // New dish: default portions_restantes to portions_max
+      if (!editingPlat && portionsMax !== null && portionsRestantes === null) {
+        portionsRestantes = portionsMax;
+      }
+
       const payload = {
         ...form,
         prix: Number(form.prix),
         categorie_id: form.categorie_id ? Number(form.categorie_id) : null,
+        portions_max: portionsMax,
+        portions_restantes: portionsRestantes,
       };
 
       if (editingPlat) {
@@ -101,6 +116,15 @@ export function AdminPlats() {
       await loadData();
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleRestock = async (plat) => {
+    try {
+      await resetStock(plat.id);
+      await loadData();
+    } catch (err) {
+      console.error('Erreur réapprovisionnement:', err);
     }
   };
 
@@ -151,6 +175,7 @@ export function AdminPlats() {
                 <th className="text-left py-3 px-4 font-medium text-text-light">Nom</th>
                 <th className="text-left py-3 px-4 font-medium text-text-light">Catégorie</th>
                 <th className="text-left py-3 px-4 font-medium text-text-light">Prix</th>
+                <th className="text-center py-3 px-4 font-medium text-text-light">Stock</th>
                 <th className="text-center py-3 px-4 font-medium text-text-light">Dispo</th>
                 <th className="text-center py-3 px-4 font-medium text-text-light">Populaire</th>
                 <th className="text-right py-3 px-4 font-medium text-text-light">Actions</th>
@@ -163,6 +188,23 @@ export function AdminPlats() {
                   <td className="py-3 px-4 text-text-light">{plat.categories?.nom || '—'}</td>
                   <td className="py-3 px-4">{Number(plat.prix).toFixed(2)} €</td>
                   <td className="py-3 px-4 text-center">
+                    {plat.portions_max === null ? (
+                      <span className="text-text-light text-xs" title="Stock illimité">∞</span>
+                    ) : (
+                      <span
+                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                          plat.portions_restantes === 0
+                            ? 'bg-red-100 text-red-700'
+                            : plat.portions_restantes <= 5
+                              ? 'bg-orange-100 text-orange-700'
+                              : 'bg-green-100 text-green-700'
+                        }`}
+                      >
+                        {plat.portions_restantes} / {plat.portions_max}
+                      </span>
+                    )}
+                  </td>
+                  <td className="py-3 px-4 text-center">
                     <span className={`inline-block w-2.5 h-2.5 rounded-full ${plat.disponible ? 'bg-green-500' : 'bg-red-400'}`} />
                   </td>
                   <td className="py-3 px-4 text-center">
@@ -170,6 +212,15 @@ export function AdminPlats() {
                   </td>
                   <td className="py-3 px-4 text-right">
                     <div className="flex items-center justify-end gap-2">
+                      {plat.portions_max !== null && plat.portions_restantes < plat.portions_max && (
+                        <button
+                          onClick={() => handleRestock(plat)}
+                          className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                          title="Réapprovisionner"
+                        >
+                          <RefreshCw size={16} />
+                        </button>
+                      )}
                       <button
                         onClick={() => openEdit(plat)}
                         className="p-1.5 text-blue hover:bg-blue/10 rounded-lg transition-colors"
@@ -190,7 +241,7 @@ export function AdminPlats() {
               ))}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-text-light">
+                  <td colSpan={7} className="py-8 text-center text-text-light">
                     Aucun plat trouvé.
                   </td>
                 </tr>
@@ -287,6 +338,33 @@ export function AdminPlats() {
                     onError={(e) => { e.target.style.display = 'none'; }}
                   />
                 )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-text mb-1">
+                    Portions max <span className="text-text-light font-normal">(vide = illimité)</span>
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={form.portions_max}
+                    onChange={(e) => setForm({ ...form, portions_max: e.target.value })}
+                    placeholder="∞"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-blue focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-text mb-1">Portions restantes</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={form.portions_restantes}
+                    onChange={(e) => setForm({ ...form, portions_restantes: e.target.value })}
+                    placeholder="—"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-blue focus:outline-none"
+                  />
+                </div>
               </div>
 
               <div className="flex items-center gap-6">

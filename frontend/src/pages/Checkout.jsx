@@ -236,7 +236,14 @@ export function Checkout() {
       clearCart();
       setStep(4);
     } catch (err) {
-      setError(err.message || 'Une erreur est survenue lors de la commande.');
+      if (err.message === 'STOCK_INSUFFISANT') {
+        setError(
+          'Certains articles ne sont plus disponibles en quantité suffisante. ' +
+          'Veuillez retourner au menu pour ajuster votre panier.'
+        );
+      } else {
+        setError(err.message || 'Une erreur est survenue lors de la commande.');
+      }
     } finally {
       setSubmitting(false);
     }

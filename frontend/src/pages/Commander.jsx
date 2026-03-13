@@ -17,6 +17,7 @@ export function Commander() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedZone, setSelectedZone] = useState(null);
   const [showAllergens, setShowAllergens] = useState(null);
+  const [stockAlert, setStockAlert] = useState('');
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -35,6 +36,16 @@ export function Commander() {
   const canOrder = cartTotal >= minimumCommande;
 
   const handleAddToCart = (plat) => {
+    // Check stock limit before adding
+    if (plat.portions_restantes !== null) {
+      const inCart = cart.find((i) => i.id === plat.id && i.type === 'plat');
+      const qtyInCart = inCart ? inCart.quantite : 0;
+      if (qtyInCart >= plat.portions_restantes) {
+        setStockAlert(`Stock limité à ${plat.portions_restantes} portion${plat.portions_restantes > 1 ? 's' : ''} pour "${plat.nom}"`);
+        setTimeout(() => setStockAlert(''), 3000);
+        return;
+      }
+    }
     addToCart({
       id: plat.id,
       type: 'plat',
@@ -80,6 +91,20 @@ export function Commander() {
             Livraison ou retrait sous 24h. Commande minimum : {minimumCommande}€
           </p>
         </motion.div>
+
+        {/* Stock alert */}
+        <AnimatePresence>
+          {stockAlert && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="bg-orange-50 text-orange-700 px-4 py-3 rounded-xl mb-6 text-sm font-medium text-center"
+            >
+              {stockAlert}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Zone de livraison */}
         {zones && zones.length > 0 && (
@@ -235,7 +260,15 @@ export function Commander() {
                           </button>
                           <span className="w-6 text-center text-text">{item.quantite}</span>
                           <button
-                            onClick={() => updateQuantite(item.id, 1, item.type)}
+                            onClick={() => {
+                              const plat = plats?.find((p) => p.id === item.id);
+                              if (plat?.portions_restantes !== null && plat?.portions_restantes !== undefined && item.quantite >= plat.portions_restantes) {
+                                setStockAlert(`Stock limité à ${plat.portions_restantes} pour "${item.nom}"`);
+                                setTimeout(() => setStockAlert(''), 3000);
+                                return;
+                              }
+                              updateQuantite(item.id, 1, item.type);
+                            }}
                             className="w-8 h-8 bg-cream rounded-full flex items-center justify-center"
                           >
                             <Plus size={14} />

@@ -69,6 +69,26 @@ export async function deletePlat(id) {
   if (error) throw error;
 }
 
+export async function resetStock(platId) {
+  // Fetch current portions_max then set portions_restantes = portions_max
+  const { data: plat, error: fetchErr } = await supabase
+    .from('plats')
+    .select('portions_max')
+    .eq('id', platId)
+    .single();
+  if (fetchErr) throw fetchErr;
+  if (plat.portions_max === null) return; // unlimited — nothing to reset
+
+  const { data, error } = await supabase
+    .from('plats')
+    .update({ portions_restantes: plat.portions_max, disponible: true })
+    .eq('id', platId)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
 export async function fetchCategories() {
   const { data, error } = await supabase
     .from('categories')
