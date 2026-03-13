@@ -1,5 +1,42 @@
 import { supabase } from '../lib/supabase';
 
+// ── Notification helper (fire-and-forget) ───────────
+
+/**
+ * Trigger an email notification via the send-notification Edge Function.
+ * Never throws — failures are logged silently so they don't block user flows.
+ */
+export async function triggerNotification(commandeId, eventType, extra = {}) {
+  try {
+    const { data: { session: authSession } } = await supabase.auth.getSession();
+    const token = authSession?.access_token;
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+
+    const response = await fetch(
+      `${supabaseUrl}/functions/v1/send-notification`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          commande_id: commandeId,
+          event_type: eventType,
+          ...extra,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const text = await response.text();
+      console.warn(`[Notification] Échec (${eventType}):`, text);
+    }
+  } catch (err) {
+    console.warn(`[Notification] Erreur (${eventType}):`, err.message);
+  }
+}
+
 export async function fetchZonesLivraison() {
   const { data, error } = await supabase
     .from('zones_livraison')
@@ -63,6 +100,9 @@ export async function creerCommande({
     .insert(lignes);
 
   if (errLignes) throw errLignes;
+
+  // Trigger order creation email (fire-and-forget)
+  triggerNotification(commande.id, 'creation');
 
   return commande;
 }

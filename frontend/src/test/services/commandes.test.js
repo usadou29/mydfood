@@ -101,11 +101,17 @@ describe('commandes service', () => {
   });
 
   describe('creerCommande', () => {
+    beforeEach(() => {
+      // triggerNotification (fire-and-forget) uses fetch internally
+      globalThis.fetch = vi.fn().mockResolvedValue({ ok: true, text: () => Promise.resolve('') });
+    });
+    afterEach(() => {
+      delete globalThis.fetch;
+    });
+
     it('creates order with items and correct mode_paiement', async () => {
       mockGetUser.mockResolvedValueOnce({ data: { user: { id: 'user-123' } } });
-      // creerCommande chains: from().insert().select().single()
-      // Then from().insert() for lignes
-      // First chain: commandes insert → select → single resolves
+      mockGetSession.mockResolvedValueOnce({ data: { session: { access_token: 'tok' } } }); // for triggerNotification
       mockFrom.mockReturnValueOnce({
         insert: vi.fn().mockReturnValue({
           select: vi.fn().mockReturnValue({
@@ -137,8 +143,39 @@ describe('commandes service', () => {
       expect(mockFrom).toHaveBeenCalledWith('commande_lignes');
     });
 
+    it('triggers creation notification after order is created', async () => {
+      mockGetUser.mockResolvedValueOnce({ data: { user: { id: 'u1' } } });
+      mockGetSession.mockResolvedValueOnce({ data: { session: { access_token: 'tok' } } });
+      mockFrom.mockReturnValueOnce({
+        insert: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({ data: { id: 99, numero: 'DF-099' }, error: null }),
+          }),
+        }),
+      });
+      mockFrom.mockReturnValueOnce({
+        insert: vi.fn().mockResolvedValue({ error: null }),
+      });
+
+      await creerCommande({
+        client: { nom: 'A', email: 'a@a.com', telephone: '06' },
+        type_livraison: 'retrait',
+        items: [{ nom: 'X', prix_unitaire: 5, quantite: 1 }],
+        sous_total: 5, frais_livraison: 0, total: 5,
+      });
+
+      // triggerNotification calls fetch with send-notification URL
+      expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+      const [url, opts] = globalThis.fetch.mock.calls[0];
+      expect(url).toContain('/functions/v1/send-notification');
+      const body = JSON.parse(opts.body);
+      expect(body.commande_id).toBe(99);
+      expect(body.event_type).toBe('creation');
+    });
+
     it('defaults mode_paiement to especes', async () => {
       mockGetUser.mockResolvedValueOnce({ data: { user: null } });
+      mockGetSession.mockResolvedValueOnce({ data: { session: null } });
       const mockInnerInsert = vi.fn().mockReturnValue({
         select: vi.fn().mockReturnValue({
           single: vi.fn().mockResolvedValue({ data: { id: 2 }, error: null }),

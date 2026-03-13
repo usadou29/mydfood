@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import { triggerNotification } from './commandes';
 
 // =====================
 // DASHBOARD STATS
@@ -97,6 +98,15 @@ export async function fetchAllCommandes(filtreStatut = null) {
   return data;
 }
 
+// Map DB statut → notification event_type
+const STATUT_TO_EVENT = {
+  en_preparation: 'preparing',
+  prete: 'ready',
+  en_livraison: 'delivery',
+  livree: 'delivered',
+  annulee: 'cancelled',
+};
+
 export async function updateCommandeStatut(id, statut, notesAdmin = '') {
   const updates = { statut };
   if (notesAdmin) updates.notes_admin = notesAdmin;
@@ -108,6 +118,16 @@ export async function updateCommandeStatut(id, statut, notesAdmin = '') {
     .select()
     .single();
   if (error) throw error;
+
+  // Trigger email notification (fire-and-forget)
+  const eventType = STATUT_TO_EVENT[statut];
+  if (eventType) {
+    const extra = eventType === 'cancelled' && notesAdmin
+      ? { cancellation_reason: notesAdmin }
+      : {};
+    triggerNotification(id, eventType, extra);
+  }
+
   return data;
 }
 

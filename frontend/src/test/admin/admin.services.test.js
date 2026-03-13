@@ -47,6 +47,12 @@ vi.mock('../../lib/supabase', () => ({
   supabase: { from: mockFrom },
 }));
 
+// Mock triggerNotification (imported by admin.js from commandes.js)
+const mockTriggerNotification = vi.hoisted(() => vi.fn());
+vi.mock('../../services/commandes', () => ({
+  triggerNotification: mockTriggerNotification,
+}));
+
 import {
   fetchAllPlats,
   createPlat,
@@ -133,6 +139,30 @@ describe('Admin Service - Commandes', () => {
     mockSingle.mockResolvedValue({ data: { id: 1 }, error: null });
     await updateCommandeStatut(1, 'annulee', 'Client absent');
     expect(mockUpdate).toHaveBeenCalledWith({ statut: 'annulee', notes_admin: 'Client absent' });
+  });
+
+  it('triggers preparing notification when moving to en_preparation', async () => {
+    mockSingle.mockResolvedValue({ data: { id: 5, statut: 'en_preparation' }, error: null });
+    await updateCommandeStatut(5, 'en_preparation');
+    expect(mockTriggerNotification).toHaveBeenCalledWith(5, 'preparing', {});
+  });
+
+  it('triggers delivered notification when moving to livree', async () => {
+    mockSingle.mockResolvedValue({ data: { id: 5, statut: 'livree' }, error: null });
+    await updateCommandeStatut(5, 'livree');
+    expect(mockTriggerNotification).toHaveBeenCalledWith(5, 'delivered', {});
+  });
+
+  it('triggers cancelled notification with reason', async () => {
+    mockSingle.mockResolvedValue({ data: { id: 5, statut: 'annulee' }, error: null });
+    await updateCommandeStatut(5, 'annulee', 'Rupture de stock');
+    expect(mockTriggerNotification).toHaveBeenCalledWith(5, 'cancelled', { cancellation_reason: 'Rupture de stock' });
+  });
+
+  it('does not trigger notification for confirmee (handled by Stripe webhook)', async () => {
+    mockSingle.mockResolvedValue({ data: { id: 5, statut: 'confirmee' }, error: null });
+    await updateCommandeStatut(5, 'confirmee');
+    expect(mockTriggerNotification).not.toHaveBeenCalled();
   });
 });
 

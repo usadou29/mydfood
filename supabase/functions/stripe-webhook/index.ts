@@ -96,6 +96,9 @@ serve(async (req: Request) => {
           // Don't return 500 — Stripe would retry. Log and acknowledge.
         }
 
+        // Trigger payment confirmed notification (fire-and-forget)
+        await triggerNotification(supabaseUrl, supabaseServiceKey, Number(commandeId), 'payment_confirmed');
+
         break;
       }
 
@@ -108,7 +111,7 @@ serve(async (req: Request) => {
         console.log(`Session expirée pour commande ${commandeId}`);
 
         // Only cancel if still pending (don't cancel already confirmed orders)
-        await supabase
+        const { data: cancelledData } = await supabase
           .from('commandes')
           .update({
             statut: 'annulee',
@@ -116,7 +119,17 @@ serve(async (req: Request) => {
             updated_at: new Date().toISOString(),
           })
           .eq('id', Number(commandeId))
-          .eq('statut', 'en_attente');
+          .eq('statut', 'en_attente')
+          .select('id')
+          .single();
+
+        // Only notify if the update actually happened (order was still en_attente)
+        if (cancelledData) {
+          await triggerNotification(
+            supabaseUrl, supabaseServiceKey, Number(commandeId), 'cancelled',
+            { cancellation_reason: 'Session de paiement Stripe expirée.' }
+          );
+        }
 
         break;
       }
@@ -140,3 +153,40 @@ serve(async (req: Request) => {
     );
   }
 });
+
+/**
+ * Trigger an email notification via the send-notification Edge Function.
+ * Fire-and-forget: errors are logged but never thrown.
+ */
+async function triggerNotification(
+  supabaseUrl: string,
+  serviceRoleKey: string,
+  commandeId: number,
+  eventType: string,
+  extra: Record<string, unknown> = {}
+) {
+  try {
+    const response = await fetch(
+      `${supabaseUrl}/functions/v1/send-notification`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${serviceRoleKey}`,
+        },
+        body: JSON.stringify({
+          commande_id: commandeId,
+          event_type: eventType,
+          ...extra,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const text = await response.text();
+      console.warn(`[stripe-webhook] Notification ${eventType} failed:`, text);
+    }
+  } catch (err) {
+    console.warn(`[stripe-webhook] Notification ${eventType} error:`, err.message);
+  }
+}
